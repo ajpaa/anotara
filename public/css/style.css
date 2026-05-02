@@ -1,0 +1,102 @@
+ /* Reset some default spacing */
+body {
+    font-family: Arial, sans-serif;
+    margin: 10px;
+    background-color: #eef4fb;
+}
+
+/* Title */
+h1 {
+    text-align: center;
+    color: #1e3a8a;
+}
+
+/* Buttons */
+button {
+    padding: 8px 14px;
+    margin: 5px 3px;
+    border: none;
+    border-radius: 6px;
+    background-color: #3b82f6; /* blue */
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background-color: #2563eb; /* darker blue */
+    text-align: center;
+}
+
+/* Links */
+a {
+    text-decoration: none;
+    color: white;
+}
+
+/* Top buttons (Back, Logout) */
+a button {
+    background-color: #1e40af; /* deeper blue */
+}
+
+a button:hover {
+    background-color: #1e3a8a;
+}
+
+/* Form styling */
+#createPostForm {
+    margin: 20px 0;
+    display: flex;
+    gap: 10px;
+}
+
+input, select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #93c5fd; /* light blue border */
+}
+
+/* Filter group */
+#filter-group {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    display: inline-block;
+    border: 1px solid #bfdbfe;
+}
+
+/* Search bar */
+#searchBar {
+    margin-top: 10px;
+    width: 200px;
+}
+
+/* Post list */
+#postList {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+/* Each post */
+#postList li {
+    background-color: white;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    border-left: 5px solid #3b82f6; /* blue accent */
+}
+
+/* Delete button */
+#postList button {
+    background-color: #60a5fa; /* lighter blue */
+}
+
+#postList button:hover {
+    background-color: #2563eb;
+}
