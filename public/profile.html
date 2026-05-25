@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ano Tara? | Profile Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <nav class="topbar">
+        <div class="logo">Ano Tara?</div>
+        <div class="nav-icons">
+            <a href="guest.html" title="Home"><i class="fa-solid fa-house"></i></a>
+            <a href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="favorites.html" title="Favorites"><i class="fa-solid fa-heart"></i></a>
+            <a href="profile.html" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
+        </div>
+    </nav>
+        <!--FOR GUEST PROFILE SECTION-->
+    <div class="guest-dashboard">
+        <div class="guest-profile">
+            <img src="https://cdn-icons-png.flaticon.com/512/1177/1177568.png" alt="User Profile Pic" width="200" height="200">
+
+            <div class="guest-profile-text">
+            <p id="guest-name">Name</p>
+            <p id="guest-contact">Contact Info</p>
+            <p>Guest</p>
+            <!--FOR LOG OUT ICON -->
+            <a href="index.html" title="Back to Login">  Log Out  <i class="fa-solid fa-sign-out"></i></a>
+            </div>
+
+        </div>
+
+        <!--FOR CALENDAR TO VIEW BOOKINGS-->
+        <div class="calendar-book-filter">
+            <div class="calendar-book-header">
+                <button id="prevBtn"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="month-year"></div>
+                <button id="nextBtn"><i class="fa-solid fa-chevron-right"></i></button>
+            </div> 
+            <div class="days">
+                <div class="day">Mon</div>
+                <div class="day">Tue</div>
+                <div class="day">Wed</div>
+                <div class="day">Thu</div>
+                <div class="day">Fri</div>
+                <div class="day">Sat</div>
+                <div class="day">Sun</div>
+            </div>
+            <div class="dates"></div>
+        </div>
+    </div>
+    <!--FOR GUEST SUMMARY OF BOOKINGS-->
+    <div class="guest-bookings">
+        <p>TEST</p>
+    </div>
+
+    <script src="js/profile.js"></script>
+</body>
+</html>
