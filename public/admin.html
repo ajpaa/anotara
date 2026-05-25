@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ano Tara? | Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav class="topbar">
+        <div class="logo" onclick="loadDashboard()" style="cursor:pointer">Ano Tara? Admin</div>
+        <div class="nav-icons">
+            <a href="#" onclick="loadDashboard()" title="Dashboard"><i class="fa-solid fa-gauge"></i></a>
+            <a href="#" onclick="showSection('listings')" title="Listings"><i class="fa-solid fa-house"></i></a>
+            <a href="#" onclick="showSection('bookings')" title="Bookings"><i class="fa-solid fa-calendar-check"></i></a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1 id="admin-title">Admin Dashboard</h1>
+            <p>System Overview & Management</p>
+        </div>        
+    </header>
+
+    <main class="content-area">
+        <div id="admin-content">
+            </div>
+    </main>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
