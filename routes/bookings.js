@@ -2,6 +2,25 @@ const express = require('express');
 const router = express.Router();
 const Booking = require('../models/Booking');
 
+router.get("/", async (req, res) => {
+  try {
+    const bookings = await Booking.find().populate("listing", "name");
+    res.json(bookings);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// NEW ROUTE: Get ALL bookings (for Admin)
+router.get('/', async (req, res) => {
+    try {
+        const bookings = await Booking.find().populate('listing', 'name');
+        res.json(bookings);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch all bookings: " + err.message });
+    }
+});
+
 // 1. CREATE: Guest submits a booking request (POST)
 router.post('/', async (req, res) => {
     try {
