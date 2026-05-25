@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ano Tara? | Guest Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="guest-body">
+
+    <nav class="topbar">
+        <div class="logo">Ano Tara?</div>
+        <div class="nav-icons">
+            <a href="guest.html" title="Home"><i class="fa-solid fa-house"></i></a>
+            <a href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="favorites.html" title="Favorites"><i class="fa-solid fa-heart"></i></a>
+            <a href="profile.html" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Make your drawings come true!</h1>
+            <p>Book vacation stays at lowest price</p>
+        </div>
+        
+        <div class="glass-search">
+            <div class="s-item">
+                <label>Location</label>
+                <input type="text" placeholder="Where are you going?">
+            </div>
+            <div class="s-item">
+                <label>Check in</label>
+                <input type="text" placeholder="Add dates">
+            </div>
+            <div class="s-item">
+                <label>Check out</label>
+                <input type="text" placeholder="Add dates">
+            </div>
+            <div class="s-item">
+                <label>Guests</label>
+                <input type="text" placeholder="Add guests">
+            </div>
+            <button class="search-circle"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+    </header>
+
+    <section class="filter-bar">
+        <div class="filter-group">
+            <i class="fa-solid fa-location-dot"></i>
+            <select id="filter-location">
+                <option value="">Location (NCR)</option>
+                <option value="caloocan">Caloocan</option>
+                <option value="las pinas">Las Piñas</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <i class="fa-solid fa-hotel"></i>
+            <select id="filter-type">
+                <option value="">Type</option>
+                <option value="house">House</option>
+                <option value="condominium">Condominium</option>
+                <option value="apartment">Apartment</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <i class="fa-solid fa-tags"></i>
+            <input type="number" placeholder="Max Price" id="filter-price">
+        </div>
+        <div class="filter-group">
+            <i class="fa-solid fa-border-all"></i>
+            <select id="filter-view">
+                <option value="grid">Grid View</option>
+                <option value="list">List View</option>
+            </select>
+        </div>
+    </section>
+
+    <main class="content-area">
+        <h2 class="section-title">Popular Bookings</h2>
+        <div id="listings-grid" class="listings-grid">
+            <p class="empty-msg">Listings loading...</p>
+        </div>
+    </main>
+
+    <script src="js/guest.js"></script>
+
+</body>
+</html>
+

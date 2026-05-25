@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Listing Details | Allu&Co</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="details-page">
+    <nav class="topbar">
+        <div class="logo" onclick="location.href='guest.html'" style="cursor:pointer">Allu&Co</div>
+        <div class="search-mini"><input type="text" placeholder="Search here..."><i class="fa-solid fa-magnifying-glass"></i></div>
+    </nav>
+
+    <main class="details-container">
+        <section class="details-left">
+            <div class="image-gallery">
+                <div class="main-img"><img id="det-img" src="" alt="Room"></div>
+                <div class="side-imgs">
+                    <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=400" alt="Sub1">
+                    <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=400" alt="Sub2">
+                </div>
+            </div>
+
+            <h1 id="det-title">Loading...</h1>
+            <p class="address"><i class="fa-solid fa-location-dot"></i> <span id="det-loc"></span></p>
+            
+            <div class="tags">
+                <span>Minimalist</span><span>Beach House</span><span>Private Pool</span>
+            </div>
+
+            <h3>Hotel Features</h3>
+            <div class="features">
+                <span><i class="fa-solid fa-wifi"></i> Wifi</span>
+                <span><i class="fa-solid fa-bed"></i> King Bed</span>
+                <span><i class="fa-solid fa-utensils"></i> Breakfast</span>
+            </div>
+
+            <div class="description">
+                <h3>Our House</h3>
+                <p id="det-desc">Experience the ultimate comfort in our room...</p>
+            </div>
+        </section>
+
+        <aside class="details-right">
+            <div class="booking-card">
+                <div class="price-header">
+                    <span class="price-big">$<span id="det-price">0</span></span>/night
+                    <span class="discount-tag">10% Off</span>
+                </div>
+
+                <form id="detailsBookingForm">
+                    <div class="form-row">
+                        <label>Check In</label>
+                        <input type="date" id="startDate" required>
+                    </div>
+                    <div class="form-row">
+                        <label>Check Out</label>
+                        <input type="date" id="endDate" required>
+                    </div>
+                    <div class="form-row">
+                        <label>Name</label>
+                        <input type="text" id="guestName" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-row">
+                        <label>Payment Proof (Image)</label>
+                        <input type="file" id="bookingImage">
+                    </div>
+
+                    <div class="total-summary">
+                        <p>Total Cost: <span class="bold">$<span id="total-price">0</span></span></p>
+                    </div>
+
+                    <button type="submit" class="pay-btn">Pay Now <i class="fa-solid fa-arrow-right"></i></button>
+                </form>
+            </div>
+        </aside>
+    </main>
+
+    <script src="js/details.js"></script>
+</body>
+</html>
