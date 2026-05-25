@@ -59,48 +59,55 @@ async function fetchHostListings() {
             return;
         }
 
-        listings.forEach(listing => {
-            const card = document.createElement("div");
-            card.className = "listing-card"; 
-            
-            // Safe character escapes for HTML attribute strings
-            // Adjusted keys to match Mongoose schema specs (title, location.city, location.country)
-            const displayTitle = listing.title || "Untitled Accomodation";
-            const cityValue = listing.location?.city || "Not Specified";
-            const countryValue = listing.location?.country || "";
-            const displayLoc = `${cityValue}${countryValue ? ', ' + countryValue : ''}`;
-            
-            const escapedTitle = displayTitle.replace(/'/g, "\\'");
-            const escapedCity = cityValue.replace(/'/g, "\\'");
-            const escapedCountry = countryValue.replace(/'/g, "\\'");
-            const escapedType = (listing.type || "Property").replace(/'/g, "\\'");
-            const escapedDesc = (listing.description || "No description provided.").replace(/'/g, "\\'");
+ listings.forEach(listing => {
+    const card = document.createElement("div");
+    card.className = "listing-card"; 
+    
+    // FIX 1: Use listing.name (matches your JSON)
+    const displayTitle = listing.name || "Untitled Accomodation";
+    
+    // FIX 2: Use listing.locationID (matches your JSON string)
+    const displayLoc = listing.locationID || "Not Specified";
+    
+    // FIX 3: Use listing.price (matches your JSON)
+    const displayPrice = Number(listing.price || 0).toLocaleString();
 
-            card.innerHTML = `
-                <img src="${listing.image || 'https://placehold.co/600x400?text=Property+Preview'}" alt="${displayTitle}">
-                <div class="card-info">
-                    <h3>${displayTitle}</h3>
-                    <p class="loc"><i class="fa-solid fa-location-dot"></i> ${displayLoc} • ${listing.type || 'Property'}</p>
-                    <p class="loc" style="margin-top: 5px; font-size: 0.8rem; height: 35px; overflow: hidden;">${listing.description || 'No description provided.'}</p>
-                    
-                    <div class="price-row" style="margin-top: 15px; border-top: 1px solid #f0f0f0; padding-top: 10px;">
-                        <div class="price">
-                            <strong>₱${Number(listing.pricePerNight || 0).toLocaleString()}</strong> / night
-                        </div>
-                    </div>
+    // Support both the new images array and the old single image string
+    const displayImg = (listing.images && listing.images.length > 0) 
+        ? listing.images[0] 
+        : (listing.image || 'https://placehold.co/600x400?text=Property+Preview');
 
-                    <div class="host-card-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
-                        <button class="btn-approve" style="padding: 8px;" onclick="setupEditForm('${listing._id}', '${escapedTitle}', ${listing.pricePerNight || 0}, '${escapedCity}', '${escapedCountry}', '${escapedType}', '${escapedDesc}')">
-                            <i class="fa-solid fa-pen-to-square"></i> Edit
-                        </button>
-                        <button class="btn-reject" style="padding: 8px; margin: 0;" onclick="deleteListing('${listing._id}')">
-                            <i class="fa-solid fa-trash-can"></i> Delete
-                        </button>
-                    </div>
+    // Escaping for the onclick attributes
+    const escapedName = displayTitle.replace(/'/g, "\\'");
+    const escapedLoc = displayLoc.replace(/'/g, "\\'");
+    const escapedType = (listing.type || "Property").replace(/'/g, "\\'");
+    const escapedDesc = (listing.description || "No description provided.").replace(/'/g, "\\'");
+
+    card.innerHTML = `
+        <img src="${displayImg}" alt="${displayTitle}">
+        <div class="card-info">
+            <h3>${displayTitle}</h3>
+            <p class="loc"><i class="fa-solid fa-location-dot"></i> ${displayLoc} • ${listing.type || 'Property'}</p>
+            <p class="loc" style="margin-top: 5px; font-size: 0.8rem; height: 35px; overflow: hidden;">${listing.description || 'No description provided.'}</p>
+            
+            <div class="price-row" style="margin-top: 15px; border-top: 1px solid #f0f0f0; padding-top: 10px;">
+                <div class="price">
+                    <strong>₱${displayPrice}</strong> / night
                 </div>
-            `;
-            gridContainer.appendChild(card);
-        });
+            </div>
+
+            <div class="host-card-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
+                <button class="btn-approve" style="padding: 8px;" onclick="setupEditForm('${listing._id}', '${escapedName}', ${listing.price || 0}, '${escapedLoc}', '${escapedType}', '${escapedDesc}')">
+                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                </button>
+                <button class="btn-reject" style="padding: 8px; margin: 0;" onclick="deleteListing('${listing._id}')">
+                    <i class="fa-solid fa-trash-can"></i> Delete
+                </button>
+            </div>
+        </div>
+    `;
+    gridContainer.appendChild(card);
+}); 
 
     } catch (err) {
         console.error("Error loading listings:", err);

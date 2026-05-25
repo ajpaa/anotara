@@ -1,107 +1,105 @@
-const listingsGrid = document.getElementById('listings-grid');
-const bookingModal = document.getElementById('bookingModal');
-
-// 1. Fetch and Display Listings
-async function fetchListings() {
-    const res = await fetch('/api/listings');
-    const listings = await res.json();
-    
-// Inside your fetchListings function in js/guest.js
-listingsGrid.innerHTML = listings.map(item => `
-    <div class="listing-card" onclick="location.href='listing-details.html?id=${item._id}'">
-        <img src="${item.image}" alt="${item.title}">
-        <div class="card-info">
-            <h3>${item.title}</h3>
-            <p class="loc">${item.location}</p>
-            <p class="price"><strong>$${item.price}</strong> / night</p>
-        </div>
-    </div>
-`).join('');
-}
-
-// 2. Open/Close Booking Form
-function openBooking(id) {
-    document.getElementById('listingId').value = id;
-    bookingModal.style.display = 'flex';
-}
-
-function closeModal() {
-    bookingModal.style.display = 'none';
-}
-
-// 3. Handle Booking Submission
-document.getElementById('bookingForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const bookingData = {
-        listingId: document.getElementById('listingId').value,
-        name: document.getElementById('guestName').value,
-        startDate: document.getElementById('startDate').value,
-        endDate: document.getElementById('endDate').value,
-        status: 'Pending' // Default status
-    };
-
-    const res = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bookingData)
-    });
-
-    if (res.ok) {
-        alert("Booking submitted! Waiting for host approval.");
-        closeModal();
-    }
+document.addEventListener("DOMContentLoaded", () => {
+    // Only call the main function that fetches from your API
+    fetchAllListings();
 });
 
-// 4. Favorites Logic
-function addToFavorites(id) {
-    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-    if (!favorites.includes(id)) {
-        favorites.push(id);
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-        alert("Added to Favorites!");
+/**
+ * 1. FETCH ALL LISTINGS FROM THE DATABASE
+ */
+async function fetchAllListings() {
+    const gridContainer = document.getElementById("listings-grid");
+    if (!gridContainer) return;
+
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+    try {
+        // Fetching real data from your MongoDB cluster
+        const response = await fetch('/api/listings');
+        const listings = await response.json();
+        
+        gridContainer.innerHTML = "";
+
+        if (listings.length === 0) {
+            gridContainer.innerHTML = `<p class="empty-msg">No vacation stays available right now.</p>`;
+            return;
+        }
+
+        listings.forEach(listing => {
+            const isFavorited = favorites.includes(listing._id);
+            const card = document.createElement("div");
+            card.className = "listing-card"; 
+
+            // Mapping MongoDB keys (name, locationID, price)
+            const displayTitle = listing.name || "Untitled Accommodation";
+            const displayLoc = listing.locationID || "Not Specified";
+            const displayPrice = Number(listing.price || 0).toLocaleString();
+            
+            // Image logic: Check images array first, then fallback to single image or placeholder
+            const displayImg = (listing.images && listing.images.length > 0) 
+                ? listing.images[0] 
+                : (listing.image || 'https://placehold.co/600x400?text=No+Image');
+
+            // Truncation logic: First sentence only
+            const shortDesc = listing.description 
+                ? listing.description.split('.')[0] + '...' 
+                : "No description available.";
+
+            const detailUrl = `listing-details.html?id=${listing._id}`;
+
+            card.innerHTML = `
+                <div class="card-image-wrapper" style="position: relative;">
+                    <img src="${displayImg}" alt="${displayTitle}">
+                    <button class="heart-btn" onclick="toggleFavorite(event, '${listing._id}')" 
+                        style="position: absolute; top: 15px; right: 15px; background: none; border: none; cursor: pointer; z-index: 10;">
+                        <i class="${isFavorited ? 'fa-solid' : 'fa-regular'} fa-heart" 
+                           style="color: ${isFavorited ? 'teal' : 'white'}; font-size: 1.5rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>
+                    </button>
+                </div>
+                <div class="card-info">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0;">${displayTitle}</h3>
+                        <span class="rating"><i class="fa-solid fa-star"></i> New</span>
+                    </div>
+                    <p class="loc-text" style="color: #666; font-size: 0.9rem; margin: 5px 0;">
+                        <i class="fa-solid fa-location-dot"></i> ${displayLoc} • ${listing.type || 'Stay'}
+                    </p>
+                    <p class="desc-text" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #444; font-size: 0.85rem;">
+                        ${shortDesc}
+                    </p>
+                    <div class="card-footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                        <span class="price"><strong>₱${displayPrice}</strong> / night</span>
+                        <button class="btn-view-details" onclick="window.location.href='${detailUrl}'">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>View Details</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            gridContainer.appendChild(card);
+        });
+    } catch (err) {
+        console.error("Fetch error:", err);
+        gridContainer.innerHTML = `<p class="empty-msg">Error loading listings. Please check your server connection.</p>`;
     }
 }
 
-fetchListings();
+/**
+ * 2. FAVORITE TOGGLE LOGIC
+ */
+function toggleFavorite(event, id) {
+    event.stopPropagation(); 
+    const icon = event.currentTarget.querySelector('i');
+    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
-// Sample Data to reflect your UI requirements
-const sampleListing = {
-    _id: "65f1234567890abcdef12345", // Mock ID
-    title: "House Of Orglodi Vill By Mogul Khan",
-    location: "3891 Ranchview Dr. Richardson, California 62639",
-    price: 20.00,
-    image: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80",
-    description: "Experience the ultimate comfort in our Deluxe King Room, designed to cater to all your needs with luxury and convenience."
-};
+    if (favorites.includes(id)) {
+        favorites = favorites.filter(favId => favId !== id);
+        icon.classList.replace('fa-solid', 'fa-regular');
+        icon.style.color = 'white';
+    } else {
+        favorites.push(id);
+        icon.classList.replace('fa-regular', 'fa-solid');
+        icon.style.color = 'teal'; // Teal on click as requested
+    }
 
-async function displayListings() {
-    const listingsGrid = document.getElementById('listings-grid');
-    
-    // In a real app, this comes from: const res = await fetch('/api/listings');
-    // For now, let's use the sample to see the function:
-    const listings = [sampleListing]; 
-
-    listingsGrid.innerHTML = listings.map(item => `
-        <div class="listing-card" onclick="goToDetails('${item._id}')">
-            <img src="${item.image}" alt="${item.title}">
-            <div class="card-info">
-                <h3>${item.title}</h3>
-                <p class="loc">${item.location}</p>
-                <div class="price-row">
-                    <p class="price"><strong>$${item.price.toFixed(2)}</strong> / night</p>
-                    <button class="fav-btn" onclick="event.stopPropagation(); addToFavorites('${item._id}')">
-                        <i class="fa-regular fa-heart"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
+    localStorage.setItem("favorites", JSON.stringify(favorites));
 }
-
-function goToDetails(id) {
-    // This redirects and passes the ID to the next page
-    window.location.href = `listing-details.html?id=${id}`;
-}
-
-displayListings();
