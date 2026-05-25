@@ -1,5 +1,3 @@
-// public/js/host.js
-
 // ==========================================
 // 1. BYPASS LOGIC & SESSION INITIALIZATION
 // ==========================================
@@ -49,7 +47,8 @@ async function fetchHostListings() {
 
     try {
         // Pointing to your server host controller mount point
-        const response = await fetch(`/api/host/listings/my-listings`);        if (!response.ok) throw new Error("Failed to fetch listings data");
+        const response = await fetch(`/api/host/listings/my-listings`);
+        if (!response.ok) throw new Error("Failed to fetch listings data");
         
         const listings = await response.json();
         gridContainer.innerHTML = ""; 
@@ -59,35 +58,28 @@ async function fetchHostListings() {
             return;
         }
 
- listings.forEach(listing => {
+listings.forEach(listing => {
     const card = document.createElement("div");
     card.className = "listing-card"; 
     
-    // FIX 1: Use listing.name (matches your JSON)
-    const displayTitle = listing.name || "Untitled Accomodation";
-    
-    // FIX 2: Use listing.locationID (matches your JSON string)
-    const displayLoc = listing.locationID || "Not Specified";
-    
-    // FIX 3: Use listing.price (matches your JSON)
-    const displayPrice = Number(listing.price || 0).toLocaleString();
+    // --- INSERT THE ESCAPING LOGIC HERE ---
+    const escapedName = (listing.name || "Untitled").replace(/'/g, "\\'");
+    const escapedLoc = (listing.locationID || "Not Specified").replace(/'/g, "\\'");
+    const escapedType = (listing.type || "Property").replace(/'/g, "\\'");
+    // Also remove newlines from description so they don't break the HTML attribute
+    const escapedDesc = (listing.description || "").replace(/'/g, "\\'").replace(/\n/g, " ");
 
-    // Support both the new images array and the old single image string
+    const displayPrice = Number(listing.price || 0).toLocaleString();
     const displayImg = (listing.images && listing.images.length > 0) 
         ? listing.images[0] 
         : (listing.image || 'https://placehold.co/600x400?text=Property+Preview');
 
-    // Escaping for the onclick attributes
-    const escapedName = displayTitle.replace(/'/g, "\\'");
-    const escapedLoc = displayLoc.replace(/'/g, "\\'");
-    const escapedType = (listing.type || "Property").replace(/'/g, "\\'");
-    const escapedDesc = (listing.description || "No description provided.").replace(/'/g, "\\'");
-
+    // --- UPDATE THE CARD INNERHTML HERE ---
     card.innerHTML = `
-        <img src="${displayImg}" alt="${displayTitle}">
+        <img src="${displayImg}" alt="${listing.name}">
         <div class="card-info">
-            <h3>${displayTitle}</h3>
-            <p class="loc"><i class="fa-solid fa-location-dot"></i> ${displayLoc} • ${listing.type || 'Property'}</p>
+            <h3>${listing.name}</h3>
+            <p class="loc"><i class="fa-solid fa-location-dot"></i> ${listing.locationID} • ${listing.type || 'Property'}</p>
             <p class="loc" style="margin-top: 5px; font-size: 0.8rem; height: 35px; overflow: hidden;">${listing.description || 'No description provided.'}</p>
             
             <div class="price-row" style="margin-top: 15px; border-top: 1px solid #f0f0f0; padding-top: 10px;">
@@ -97,7 +89,8 @@ async function fetchHostListings() {
             </div>
 
             <div class="host-card-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
-                <button class="btn-approve" style="padding: 8px;" onclick="setupEditForm('${listing._id}', '${escapedName}', ${listing.price || 0}, '${escapedLoc}', '${escapedType}', '${escapedDesc}')">
+                <button class="btn-approve" style="padding: 8px;" 
+                    onclick="setupEditForm('${listing._id}', '${escapedName}', ${listing.price || 0}, '${escapedLoc}', '${escapedType}', '${escapedDesc}')">
                     <i class="fa-solid fa-pen-to-square"></i> Edit
                 </button>
                 <button class="btn-reject" style="padding: 8px; margin: 0;" onclick="deleteListing('${listing._id}')">
@@ -107,7 +100,7 @@ async function fetchHostListings() {
         </div>
     `;
     gridContainer.appendChild(card);
-}); 
+});
 
     } catch (err) {
         console.error("Error loading listings:", err);
@@ -126,9 +119,11 @@ function toggleForm() {
     formContainer.style.display = isHidden ? "block" : "none";
     
     if (isHidden) {
+        // Reset to "Add Mode"
         document.getElementById("listing-form").reset();
         document.getElementById("form-listing-id").value = "";
         document.getElementById("form-title").innerText = "Add an Accommodation";
+        document.querySelector(".teal-submit-btn").innerText = "Save Real Estate Data Entry";
     }
 }
 
@@ -136,21 +131,24 @@ function setupEditForm(id, name, price, locationID, type, desc) {
     const formContainer = document.getElementById("listing-form-container");
     if (!formContainer) return;
 
+    window.setupEditForm = setupEditForm;
+    window.deleteListing = deleteListing;
+    window.toggleForm = toggleForm;
+
     formContainer.style.display = "block"; 
     document.getElementById("form-title").innerText = "Modify Accommodation Specifics";
+    document.querySelector(".teal-submit-btn").innerText = "Update active registry entry";
     
     document.getElementById("form-listing-id").value = id;
     document.getElementById("form-name").value = name; 
-    
-    // FIX: Force clean numerical assignment to prevent string pollution
     document.getElementById("form-price").value = Number(price); 
-    
     document.getElementById("form-location").value = locationID; 
     document.getElementById("form-type").value = type;
     document.getElementById("form-desc").value = desc;
 
     formContainer.scrollIntoView({ behavior: 'smooth' });
 }
+
 // ==========================================
 // 4. CREATE / EDIT SUBMISSION HANDLING
 // ==========================================
@@ -160,23 +158,21 @@ async function handleFormSubmit(e) {
     const mongoId = document.getElementById("form-listing-id").value;
     const isEditing = mongoId !== "";
 
-    // CLEANUP FIX: Read string, strip everything except numbers/decimals
+    // CLEANUP: Read string, strip everything except numbers/decimals
     const rawPriceValue = document.getElementById("form-price").value;
     const cleanPriceNumber = Number(String(rawPriceValue).replace(/[^0-9.]/g, ""));
-
-    // If parsing somehow still results in NaN, fall back to 0 so the database doesn't crash
     const finalPrice = isNaN(cleanPriceNumber) ? 0 : cleanPriceNumber;
 
     const payload = {
         name: document.getElementById("form-name").value,
-        price: finalPrice, // Valid numeric type sent to schema
+        price: finalPrice, 
         locationID: document.getElementById("form-location").value,
         type: document.getElementById("form-type").value,
         description: document.getElementById("form-desc").value,
         hostId: CURRENT_HOST_ID 
     };
 
-    console.log("✈️ Sending payload to server:", payload);
+    console.log(`✈️ ${isEditing ? 'Updating' : 'Creating'} payload:`, payload);
 
     const url = isEditing ? `/api/host/listings/edit/${mongoId}` : `/api/host/listings/create`;
     const method = isEditing ? "PUT" : "POST";
@@ -194,8 +190,8 @@ async function handleFormSubmit(e) {
         }
 
         alert(isEditing ? "Accommodation updated successfully!" : "New property listed successfully!");
-        toggleForm();          
-        fetchHostListings();   
+        toggleForm(); // Close and reset form          
+        fetchHostListings(); // Refresh grid   
     } catch (err) {
         console.error("Submission failed:", err);
         alert(`Error: ${err.message}`);
@@ -210,7 +206,8 @@ async function deleteListing(mongoId) {
     if (!confirmDelete) return;
 
     try {
-            const response = await fetch(`/api/host/listings/delete/${mongoId}`, { method: "DELETE" });        if (response.ok) {
+        const response = await fetch(`/api/host/listings/delete/${mongoId}`, { method: "DELETE" });
+        if (response.ok) {
             alert("Listing successfully removed!");
             fetchHostListings(); 
         } else {
@@ -218,6 +215,7 @@ async function deleteListing(mongoId) {
             alert(`Error: ${data.message}`);
         }
     } catch (err) {
+        console.error("Delete failed:", err);
         alert("Failed to reach server.");
     }
 }
