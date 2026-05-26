@@ -51,12 +51,20 @@ updateCalendar();
 
 // DISPLAY GUEST DEETS
 async function displayProfileGuest() {
-    const res = await fetch('/api/guest/profile');
-    const data = await res.json();
-    const nameElement = document.getElementById("guest-name");
-    nameElement.textContent = data.username;
+    try {
+        const res = await fetch('/api/guest/profile', {credentials: 'include'});
+        if (!res.ok) throw new Error("Could not fetch user session status.");
+        
+        const data = await res.json();
+        const nameElement = document.getElementById("guest-name");
+        
+        if (nameElement && data && data.username) {
+            nameElement.textContent = data.username;
+        }
+    } catch (err) {
+        console.error("Profile rendering error:", err);
+    }
 }
-
 displayProfileGuest();
 
 async function loadLoggedGuestBookings() {
@@ -130,3 +138,4 @@ async function loadLoggedGuestBookings() {
 }
 
 loadLoggedGuestBookings();
+
