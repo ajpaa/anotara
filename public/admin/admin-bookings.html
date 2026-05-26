@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ano Tara? | Manage Bookings</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+  <body>
+    <nav class="topbar">
+      <div class="logo">Ano Tara?</div>
+      <div class="nav-icons" id="admin-nav-icons">
+        <a href="admin.html" title="Dashboard" class="nav-link admin-nav"
+          ><i class="fa-solid fa-house"></i
+        ></a>
+        <a
+          href="admin-listings.html"
+          title="Listings"
+          class="nav-link admin-nav"
+          ><i class="fa-solid fa-gauge"></i
+        ></a>
+        <a
+          href="admin-bookings.html"
+          title="Bookings"
+          class="nav-link admin-nav active-link"
+          ><i class="fa-solid fa-calendar-check"></i
+        ></a>
+        <a href="admin-users.html" title="Users" class="nav-link admin-nav"
+          ><i class="fa-solid fa-users"></i
+        ></a>
+        <a
+          href="#"
+          title="Logout"
+          class="nav-link admin-nav logout-btn"
+          onclick="logout()"
+          ><i class="fa-solid fa-right-from-bracket"></i
+        ></a>
+      </div>
+      <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMenu()">
+        <i class="fa-solid fa-bars" id="hamburger-icon"></i>
+      </button>
+      <div class="mobile-menu" id="mobile-menu">
+        <a href="admin.html" class="mobile-menu-link"
+          ><i class="fa-solid fa-house"></i> Dashboard</a
+        >
+        <a href="admin-listings.html" class="mobile-menu-link"
+          ><i class="fa-solid fa-gauge"></i> Listings</a
+        >
+        <a href="admin-bookings.html" class="mobile-menu-link active-link"
+          ><i class="fa-solid fa-calendar-check"></i> Bookings</a
+        >
+        <a href="admin-users.html" class="mobile-menu-link"
+          ><i class="fa-solid fa-users"></i> Users</a
+        >
+        <a href="#" class="mobile-menu-link logout-mobile" onclick="logout()"
+          ><i class="fa-solid fa-right-from-bracket"></i> Logout</a
+        >
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-content">
+        <h1>Manage All Bookings</h1>
+        <p id="bookings-count">Loading bookings...</p>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <div class="listings-filter-bar">
+        <div class="listings-filter-item" style="position: relative">
+          <i class="fa-solid fa-circle-half-stroke"></i>
+          <div
+            id="status-display"
+            class="type-display"
+            onclick="toggleStatusDropdown()"
+          >
+            Status
+          </div>
+          <div id="status-dropdown" class="type-dropdown">
+            <label
+              ><input type="checkbox" value="pending" /> Pending (<span
+                id="count-pending"
+                >0</span
+              >)</label
+            >
+            <label
+              ><input type="checkbox" value="approved" /> Approved (<span
+                id="count-approved"
+                >0</span
+              >)</label
+            >
+            <label
+              ><input type="checkbox" value="rejected" /> Rejected (<span
+                id="count-rejected"
+                >0</span
+              >)</label
+            >
+          </div>
+        </div>
+        <div class="listings-filter-divider"></div>
+
+        <div class="listings-filter-item" style="position: relative">
+  <i class="fa-solid fa-location-dot"></i>
+  <input
+    type="text"
+    id="filter-location"
+    placeholder="Filter by location..."
+    autocomplete="off"
+    oninput="handleLocationInput()"
+  />
+  <div id="location-suggestions" class="location-suggestions"></div>
+</div>
+        <div class="listings-filter-divider"></div>
+
+        <div class="listings-filter-item">
+          <label for="filter-date-from">From:</label>
+          <input
+            type="date"
+            id="filter-date-from"
+            onchange="filterBookings()"
+          />
+        </div>
+        <div class="listings-filter-divider"></div>
+        <div class="listings-filter-item">
+          <label for="filter-date-to">To:</label>
+          <input type="date" id="filter-date-to" onchange="filterBookings()" />
+        </div>
+        <div class="listings-filter-divider"></div>
+
+        <div class="listings-filter-item" style="position: relative">
+          <i class="fa-solid fa-arrow-up-wide-short"></i>
+          <div
+            id="sort-display"
+            class="type-display"
+            onclick="toggleSortDropdown()"
+          >
+            Newest First
+          </div>
+          <div id="sort-dropdown" class="type-dropdown">
+            <div class="dropdown-item" onclick="applySort('newest')">
+              Newest First
+            </div>
+            <div class="dropdown-item" onclick="applySort('oldest')">
+              Oldest First
+            </div>
+          </div>
+        </div>
+        <select id="filter-sort" style="display: none">
+          <option value="newest">newest</option>
+        </select>
+      </div>
+
+      <div class="listings-toolbar">
+        <span id="bookings-count-label">Showing 0 bookings</span>
+        <div class="per-page-control">
+          <label for="per-page">Show:</label>
+          <select id="per-page">
+            <option value="12" selected>12 per page</option>
+            <option value="24">24 per page</option>
+            <option value="48">48 per page</option>
+            <option value="100">100 per page</option>
+            <option value="all">Show All</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="bookings-table-wrapper">
+        <table class="bookings-table bookings-data-table">
+          <thead>
+            <tr>
+              <th>Guest</th>
+              <th>Listing</th>
+              <th>Location</th>
+              <th>Host</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Date Booked</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="bookings-tbody">
+            <tr>
+              <td colspan="7" class="table-empty">Loading bookings...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="pagination" class="pagination-bar"></div>
+    </main>
+
+    <script src="../js/admin/admin-bookings.js"></script>
+  </body>
+</html>

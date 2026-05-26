@@ -20,13 +20,13 @@
       <div class="logo">Ano Tara?</div>
       <div class="nav-icons" id="admin-nav-icons">
         <a href="admin.html" title="Dashboard" class="nav-link admin-nav"
-          ><i class="fa-solid fa-gauge"></i
+          ><i class="fa-solid fa-house"></i
         ></a>
         <a
           href="admin-listings.html"
           title="Listings"
           class="nav-link admin-nav active-link"
-          ><i class="fa-solid fa-house"></i
+          ><i class="fa-solid fa-gauge"></i
         ></a>
         <a
           href="admin-bookings.html"
@@ -50,10 +50,10 @@
       </button>
       <div class="mobile-menu" id="mobile-menu">
         <a href="admin.html" class="mobile-menu-link"
-          ><i class="fa-solid fa-gauge"></i> Dashboard</a
+          ><i class="fa-solid fa-house"></i> Dashboard</a
         >
         <a href="admin-listings.html" class="mobile-menu-link active-link"
-          ><i class="fa-solid fa-house"></i> Listings</a
+          ><i class="fa-solid fa-gauge"></i> Listings</a
         >
         <a href="admin-bookings.html" class="mobile-menu-link"
           ><i class="fa-solid fa-calendar-check"></i> Bookings</a
@@ -87,17 +87,30 @@
           <div id="name-suggestions" class="location-suggestions"></div>
         </div>
         <div class="listings-filter-divider"></div>
-        <div class="listings-filter-item">
+        <div
+          class="listings-filter-item type-filter-item"
+          style="position: relative"
+        >
           <i class="fa-solid fa-hotel"></i>
-          <select id="filter-type">
-            <option value="">All Types</option>
-            <option value="house">House</option>
-            <option value="condominium">Condominium</option>
-            <option value="apartment">Apartment</option>
-            <option value="hotel">Hotel</option>
-            <option value="dorm">Dorm</option>
-            <option value="guest_room">Guest Room</option>
-          </select>
+          <div
+            id="type-display"
+            class="type-display"
+            onclick="toggleTypeDropdown()"
+          >
+            All Types
+          </div>
+          <div id="type-dropdown" class="type-dropdown">
+            <label><input type="checkbox" value="house" /> House</label>
+            <label
+              ><input type="checkbox" value="condominium" /> Condominium</label
+            >
+            <label><input type="checkbox" value="apartment" /> Apartment</label>
+            <label><input type="checkbox" value="dorm" /> Dorm</label>
+            <label
+              ><input type="checkbox" value="guest_room" /> Guest Room</label
+            >
+            <label><input type="checkbox" value="villa" /> Villa</label>
+          </div>
         </div>
         <div class="listings-filter-divider"></div>
         <div class="listings-filter-item" style="position: relative">
@@ -111,13 +124,21 @@
           <div id="location-suggestions" class="location-suggestions"></div>
         </div>
         <div class="listings-filter-divider"></div>
-        <div class="listings-filter-item">
-          <i class="fa-solid fa-arrow-up-wide-short"></i>
-          <select id="filter-sort">
-            <option value="">Default</option>
-            <option value="price_asc">Price: Low to High</option>
-            <option value="price_desc">Price: High to Low</option>
-          </select>
+        <div class="listings-filter-item" style="position: relative">
+  <i class="fa-solid fa-arrow-up-wide-short"></i>
+  <div id="sort-display" class="type-display" onclick="toggleSortDropdown()">
+    Newest First
+  </div>
+  <div id="sort-dropdown" class="type-dropdown">
+    <div class="dropdown-item" onclick="applySort('newest')">Newest First</div>
+    <div class="dropdown-item" onclick="applySort('price_asc')">Price: Low to High</div>
+    <div class="dropdown-item" onclick="applySort('price_desc')">Price: High to Low</div>
+  </div>
+</div>
+
+<select id="filter-sort" style="display: none">
+  <option value="newest">newest</option>
+</select>
         </div>
       </div>
 
@@ -126,9 +147,9 @@
         <div class="per-page-control">
           <label for="per-page">Show:</label>
           <select id="per-page">
-            <option value="10" selected>10 per page</option>
-            <option value="25">25 per page</option>
-            <option value="50">50 per page</option>
+            <option value="12" selected>12 per page</option>
+            <option value="24">24 per page</option>
+            <option value="48">48 per page</option>
             <option value="100">100 per page</option>
             <option value="all">Show All</option>
           </select>
