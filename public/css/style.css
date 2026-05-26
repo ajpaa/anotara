@@ -395,16 +395,6 @@ body {
     width: 100%;
 }
 
-.booking-card {
-    border: 1px solid #e0e0e0;
-    padding: 24px;
-    border-radius: 15px;
-    background: #ffffff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 100px;
-}
-
 .price-header { font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; }
 .price-header small { font-weight: normal; font-size: 0.9rem; color: var(--text-muted); }
 
@@ -1116,7 +1106,7 @@ input[type="date"], input[type="text"] {
 
 .date:hover,
 .date.active {
-    background-color: #ff5869;
+    background-color: #2aaeb2;
     color: #fff;
 }
 
@@ -1128,77 +1118,139 @@ input[type="date"], input[type="text"] {
     color: #fff;
 }
 
-/* GUEST PROFILE */
+/* --- GUEST PROFILE (TEAL THEME) --- */
+
+
+/* Ensure the profile card is wider and occupies the left space better */
+/* Remove background from the main grid to keep the left side clean */
+.dashboard-grid {
+    display: grid;
+    /* Increased sidebar to 450px and set right column to fill remaining space */
+    grid-template-columns: 450px 1fr; 
+    gap: 50px; /* Increased gap for a wider, airier feel */
+    padding: 0 40px; /* Removed auto-margin to force width expansion */
+    max-width: none; /* Removes the 1400px limit, allowing full-screen expansion */
+    margin: 20px 20px; /* Pushes the entire container away from the screen edges */
+    align-items: start;
+}
+
+/* Sidebar elements (Left Column) */
+.left-column {
+    display: flex;
+    flex-direction: column;
+    /* Increase this value to add more space between the profile and calendar */
+    gap: 20px; 
+    width: 100%;
+}
+
+/* Right content area (Reservations) */
+.right-column {
+    background: #f4f7f7;
+    border-radius: 20px;
+    padding: 50px; /* More internal padding for a wider feel */
+    border: 1px solid #e0e8e8;
+    min-height: 80vh; /* Ensures it stays tall even with few bookings */
+    width: 100%;
+  
+}
+
+
+.calendar-book-filter {
+    width: 100%;
+    margin-left: 0; /* Flush to the left */
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 15px;
+    border: 1px solid #eee;
+    gap: 10px;
+}
+
 .guest-profile {
     display: flex;
-    width: 700px;
-    height: 334px;
-    flex-direction: row;
-    gap: 30px;
-    padding: 20px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
-    font-size: 20px;
+    flex-direction: row; 
     align-items: center;
+    /* Changed from space-between to flex-start to group items to the left */
+    justify-content: flex-start; 
+    /* Reduced gap to bring them right next to each other */
+    gap: 20px; 
+    padding: 30px;
+    background: #008080;
+    color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.guest-profile img {
+    border-radius: 50%;
+    width: 150px;  /* Significantly larger image */
+    height: 150px;
+    object-fit: cover;
+    flex-shrink: 0; /* Ensures the image doesn't get squished */
 }
 
 .guest-profile-text {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    flex-grow: 1;
+    text-align: left;
+    gap: 8px;
 }
 
-.guest-profile-text a {
-    font-size: 14px;
-    align-self: flex-end;
-    color: #000;
+#guest-name {
+    font-size: 1.8rem; /* Larger name text */
+    font-weight: 800;
+    margin: 0;
 }
 
-.guest-dashboard {
+.guest-profile-text p {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+
+/* --- BOOKINGS SECTION (RIGHT COLUMN) --- */
+#guest-bookings {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    /* Adds a 20px gap between the heading and the grid of cards */
+    margin-top: 20px; 
+}
+
+/* The card now looks great in the right-side flow */
+.booking-card {
+    background: #ffffff;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
-    flex-direction: row;
-    gap: 30px;
-    padding: 20px;
-    /*margin-right: 100px;*/
-    align-items: flex-start;
-    justify-content: center;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
-.guest-bookings {
+.booking-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.booking-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.booking-details {
+    padding: 20px;
     display: flex;
-    width: 1115px;
-    height: auto;
-    flex-direction: row;
-    justify-content: center;
-    margin: auto;
-    gap: 30px;
-    padding: 20px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
-  background: #ffffff; /* Smooth warning color on interactive state */
-  transform: translateY(-2px);
+    flex-direction: column;
+    gap: 8px;
 }
 
-.btn-details {
-    display: inline-block;
-    background: #e6f7f7; /* Very light teal */
-    color: #008080;      /* Darker teal text */
-    padding: 10px 20px;
-    border-radius: 50px; /* Fully rounded pill shape */
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    border: 1px solid #cce5e5;
-}
-
-.btn-details:hover {
-    background: #008080;
-    color: #ffffff;
-    box-shadow: 0 4px 10px rgba(0, 128, 128, 0.2);
+/* --- RESPONSIVE --- */
+@media (max-width: 850px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ============================================================

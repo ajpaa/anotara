@@ -19,42 +19,40 @@
             <a href="profile.html" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
         </div>
     </nav>
-        <!--FOR GUEST PROFILE SECTION-->
-    <div class="guest-dashboard">
-        <div class="guest-profile">
-            <img src="https://cdn-icons-png.flaticon.com/512/1177/1177568.png" alt="User Profile Pic" width="200" height="200">
 
-            <div class="guest-profile-text">
-            <p id="guest-name">Name</p>
-            <p>Guest</p>
-            <!--FOR LOG OUT ICON -->
-            <a href="index.html" title="Back to Login">  Log Out  <i class="fa-solid fa-sign-out"></i></a>
+    <main class="dashboard-grid">
+        <div class="left-column">
+            <div class="guest-profile" style="background: #55b2b2; color: white; padding: 30px; border-radius: 15px; text-align: center;">
+                <img src="https://cdn-icons-png.flaticon.com/512/12225/12225935.png" alt="User Profile Pic" width="120" style="margin-bottom: 10px;">
+                <div class="guest-profile-text">
+                    <p id="guest-name" style="font-size: 1.2rem; font-weight: bold;">Loading Name...</p>
+                    <p>Guest</p>
+                    <a href="index.html" title="Back to Login" style="color: #fff; text-decoration: underline; font-size: 0.9rem;">
+                        Log Out <i class="fa-solid fa-sign-out"></i>
+                    </a>
+                </div>
             </div>
 
+            <div class="calendar-book-filter">
+                <div class="calendar-book-header">
+                    <button id="prevBtn"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="month-year"></div>
+                    <button id="nextBtn"><i class="fa-solid fa-chevron-right"></i></button>
+                </div> 
+                <div class="days">
+                    <div class="day">Mon</div><div class="day">Tue</div><div class="day">Wed</div>
+                    <div class="day">Thu</div><div class="day">Fri</div><div class="day">Sat</div><div class="day">Sun</div>
+                </div>
+                <div class="dates"></div>
+            </div>
         </div>
 
-        <!--FOR CALENDAR TO VIEW BOOKINGS-->
-        <div class="calendar-book-filter">
-            <div class="calendar-book-header">
-                <button id="prevBtn"><i class="fa-solid fa-chevron-left"></i></button>
-                <div class="month-year"></div>
-                <button id="nextBtn"><i class="fa-solid fa-chevron-right"></i></button>
-            </div> 
-            <div class="days">
-                <div class="day">Mon</div>
-                <div class="day">Tue</div>
-                <div class="day">Wed</div>
-                <div class="day">Thu</div>
-                <div class="day">Fri</div>
-                <div class="day">Sat</div>
-                <div class="day">Sun</div>
-            </div>
-            <div class="dates"></div>
+        <div class="right-column">
+            <h2><i class="fa-solid fa-city"></i> My Reservations</h2>
+            <div class="guest-bookings" id="guest-bookings">
+                </div>
         </div>
-    </div>
-    <!--FOR GUEST SUMMARY OF BOOKINGS-->
-    <div class="guest-bookings" id="guest-bookings">
-    </div>
+    </main>
 
     <script src="js/profile.js"></script>
 </body>
