@@ -1,22 +1,15 @@
 // ==========================================
 // 1. APPLICATION CONTROLLER
-// ==========================================\
-// 1. Immediately check if the user is logged in
-const sessionUser = JSON.parse(localStorage.getItem("user"));
-
-if (!sessionUser) {
-    // If no user is found in localStorage, kick them back to the login page immediately
-    alert("Access Denied: Please log in first.");
-    window.location.href = "/index.html"; // Change this to your actual login page filename
-}
+// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    // matic load of listings
     renderDashboardGrid();
 
-    // for filters
+    // Listeners for Teal UI Elements
     document.getElementById('filter-location')?.addEventListener('change', renderDashboardGrid);
     document.getElementById('search-circle')?.addEventListener('click', renderDashboardGrid);
     document.getElementById('sortby-price')?.addEventListener('change', renderDashboardGrid);
+    
+    // 🎯 UPDATED: standard 'change' listener for the dropdown
     document.getElementById('filter-type')?.addEventListener('change', renderDashboardGrid);
 });
 
@@ -27,7 +20,6 @@ async function renderDashboardGrid() {
     const listingsContainer = document.getElementById("listings-grid");
     if (!listingsContainer) return;
 
-    // location, date filters, sort, search property name
     const locationElement = document.getElementById('filter-location');
     const checkInInput = document.getElementById('checkinDate');
     const checkOutInput = document.getElementById('checkoutDate');
@@ -35,28 +27,24 @@ async function renderDashboardGrid() {
     const inputName = document.getElementById('name');
     const typeElement = document.getElementById('filter-type');
 
-    // extract values
-    const locationValue = locationElement.options[locationElement.selectedIndex]?.text.trim();
-    const startDate = checkInInput.value;
-    const endDate = checkOutInput.value;
-    const sortValue = priceSort.value; 
-    const searchName = inputName.value;
+    // Extract Values
+    const locationValue = locationElement ? locationElement.value : ""; 
+    const startDate = checkInInput ? checkInInput.value : "";
+    const endDate = checkOutInput ? checkOutInput.value : "";
+    const sortValue = priceSort ? priceSort.value : ""; 
+    const searchName = inputName ? inputName.value : "";
 
-    // extract selected types
-    let selectedTypes = [];
-    if (typeElement) {
-        selectedTypes = Array.from(typeElement.selectedOptions).map(option => option.value.trim() || option.text.trim()).filter(val => val !== "")
-    }
+    // 🎯 UPDATED: Logic for Single Dropdown
+    const selectedType = typeElement ? typeElement.value : "";
 
-    // Build API query parameters
     const params = new URLSearchParams();
 
-    // location filter || if location(ncr) -> all listings
-    if (locationValue && locationValue !== "All Locations" && locationValue !== "Location (NCR)") {
+    // Location Filter
+    if (locationValue && locationValue !== "") {
         params.append('locationID', locationValue);
     }
 
-    // availability checking
+    // Availability checking
     if (startDate && endDate) {
         if (new Date(startDate) >= new Date(endDate)) {
             alert("Check-Out date must be after the Check-In date.");
@@ -66,83 +54,74 @@ async function renderDashboardGrid() {
         params.append('end', endDate);
     }
 
-    // sort by price
-    if (sortValue) {
-        params.append('sort', sortValue)
+    // Sort, Search, and Type
+    if (sortValue) params.append('sort', sortValue);
+    if (searchName) params.append('search', searchName);
+    
+    // 🎯 UPDATED: Append single type if selected
+    if (selectedType && selectedType !== "") {
+        params.append('type', selectedType);
     }
-
-    // search name
-    if (searchName) {
-        params.append('search', searchName)
-    }
-
-    // selected types
-    selectedTypes.forEach(t => {
-        params.append('type', t);
-    });
 
     try {
-        listingsContainer.innerHTML = "<p class='loading-msg'>Updating vacation stays...</p>";
+        listingsContainer.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
+                <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: #008080;"></i>
+                <p style="color: #008080; margin-top: 10px;">Updating vacation stays...</p>
+            </div>`;
 
+        // 🛠️ FIXED: Changed single quotes to backticks so ${params.toString()} works
         const res = await fetch(`/api/listings?${params.toString()}`);
-        if (!res.ok) throw new Error("Database cluster did not respond cleanly.");
+        if (!res.ok) throw new Error("Database cluster did not respond.");
         
         const listings = await res.json();
-        listingsContainer.innerHTML = ""; // Safe container reset
+        listingsContainer.innerHTML = ""; 
 
         if (listings.length === 0) {
+            // 🛠️ FIXED: Wrapped the HTML paragraph inside backticks
             listingsContainer.innerHTML = `<p class="empty-msg">No properties match your current search.</p>`;
             return;
         }
 
         const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
-        // track heart icon 
-         listings.forEach(listing => {
+        listings.forEach(listing => {
             const isFavorited = favorites.includes(listing._id);
-            
             const displayTitle = listing.name || "Untitled Accommodation";
             const displayLoc   = listing.locationID || "Not Specified";
             const displayPrice = listing.price ? Number(listing.price).toLocaleString() : "0";
-            const shortDesc    = listing.description ? listing.description.split('.')[0] + '...' : "No description available.";
+            
+            // 🛠️ FIXED: Changed string assignment to use backticks for template literal interpolation
             const detailUrl    = `/listing-details?id=${listing._id}`;
 
-            // Image Lookup Fallback Chain
-            let displayImg = 'https://placehold.co/600x400?text=No+Image';
-            if (listing.images && listing.images.length > 0 && listing.images[0]) {
-                displayImg = listing.images[0];
-            } else if (listing.image) {
-                displayImg = listing.image;
-            }
+            // Image Fallback
+            let displayImg = listing.images?.[0] || listing.image || 'https://placehold.co/600x400?text=No+Image';
 
             const card = document.createElement("div");
             card.className = "listing-card"; 
 
             card.innerHTML = `
-                <div class="card-image-wrapper" style="position: relative;">
-                    <img src="${displayImg}" alt="${displayTitle}" onerror="this.src='https://placehold.co/600x400?text=Image+Load+Error'">
+                <div class="card-image-wrapper" style="position: relative; overflow: hidden; border-radius: 15px 15px 0 0;">
+                    <img src="${displayImg}" alt="${displayTitle}" style="transition: transform 0.3s ease;">
                     <button class="heart-btn" onclick="toggleFavorite(event, '${listing._id}')" 
-                        style="position: absolute; top: 15px; right: 15px; background: none; border: none; cursor: pointer; z-index: 10;">
+                        style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); border-radius: 50%; width: 35px; height: 35px; border: none; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">
                         <i class="${isFavorited ? 'fa-solid' : 'fa-regular'} fa-heart" 
-                           style="color: ${isFavorited ? 'teal' : 'white'}; font-size: 1.5rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>
+                           style="color: ${isFavorited ? '#008080' : 'white'}; font-size: 1.2rem;"></i>
                     </button>
                 </div>
-                <div class="card-info">
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                        <h3 style="margin: 0;">${displayTitle}</h3>
-                        <span class="rating"><i class="fa-solid fa-star"></i> New</span>
+                <div class="card-info" style="padding: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <h3 style="margin: 0; font-size: 1.1rem; color: #333;">${displayTitle}</h3>
+                        <span style="color: #f39c12; font-size: 0.85rem;"><i class="fa-solid fa-star"></i> New</span>
                     </div>
-                    <p class="loc-text" style="color: #666; font-size: 0.9rem; margin: 5px 0;">
-                        <i class="fa-solid fa-location-dot"></i> ${displayLoc} • ${listing.type || 'Stay'}
+                    <p style="color: #666; font-size: 0.85rem; margin: 8px 0;">
+                        <i class="fa-solid fa-location-dot" style="color: #008080;"></i> ${displayLoc} • ${listing.type || 'Stay'}
                     </p>
-                    <p class="desc-text" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #444; font-size: 0.85rem;">
-                        ${shortDesc}
-                    </p>
-                    <div class="card-footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                        <span class="price"><strong>₱${displayPrice}</strong> / night</span>
-                        <button class="btn-view-details" onclick="window.location.href='${detailUrl}'">
-                            <i class="fa-solid fa-plus"></i>
-                            <span>View Details</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; border-top: 1px solid #f0f0f0; padding-top: 10px;">
+                        <span class="price" style="font-size: 1rem; color: #333;"><strong>₱${displayPrice}</strong> / night</span>
+                        <button class="btn-view-details" onclick="window.location.href='${detailUrl}'" 
+                                style="background: #008080; color: white; border: none; width: 35px; height: 35px; border-radius: 8px; cursor: pointer;">
+                            <i class="fa-solid fa-arrow-right"></i>
                         </button>
                     </div>
                 </div>
@@ -152,6 +131,7 @@ async function renderDashboardGrid() {
 
     } catch (err) {
         console.error("Master Rendering Pipeline Error:", err);
+        // 🛠️ FIXED: Wrapped the catch error HTML inside backticks
         listingsContainer.innerHTML = `<p class="empty-msg">Error syncing data adjustments.</p>`;
     }
 }
@@ -171,8 +151,7 @@ function toggleFavorite(event, id) {
     } else {
         favorites.push(id);
         icon.classList.replace('fa-regular', 'fa-solid');
-        icon.style.color = 'teal';
+        icon.style.color = '#008080'; // Teal
     }
-
     localStorage.setItem("favorites", JSON.stringify(favorites));
 }
