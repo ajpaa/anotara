@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listing Details | Ano Tara?</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="details-page">
 
@@ -26,65 +26,66 @@
                 <span id="det-loc"></span>
                 <span class="rating"><i class="fa-solid fa-star"></i> 4.9 (New)</span>
             </div>
+            <div class="details-tabs">
+                <span class="tab active">Description</span>
+            </div>
         </header>
 
-        <div class="details-grid">
+        <div class="main-layout" style="display: grid; grid-template-columns: 1fr 350px; gap: 40px;">
+            
             <section class="content-main">
                 <div class="image-gallery">
-                    <img id="det-img" src="https://placehold.co/800x500?text=Loading+Image" alt="Property">
+                    <img id="det-img" src="..." alt="Property">
                 </div>
 
-                <div class="description-section">
+                <div class="description-section" style="margin-top: 20px;">
                     <h2>About this <span id="det-type" style="color: var(--primary-teal);">stay</span></h2>
-                    <p id="det-desc">Fetching latest information from host...</p>
+                    <p id="det-desc">Fetching details...</p>
                 </div>
 
-                <div class="amenities">
+                <div class="amenities-section" style="margin-top: 20px;">
                     <h3>What this place offers</h3>
-                    <div class="amenity-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <span><i class="fa-solid fa-wifi"></i> Fast WiFi</span>
-                        <span><i class="fa-solid fa-car"></i> Free parking</span>
-                        <span><i class="fa-solid fa-kitchen-set"></i> Kitchen</span>
-                        <span><i class="fa-solid fa-snowflake"></i> AC</span>
+                    <div class="amenity-grid">
+                        <span><i class="fa-solid fa-wifi" style="color: var(--primary-teal);"></i> Fast WiFi</span>
+                        <span><i class="fa-solid fa-bed" style="color: var(--primary-teal);"></i> King Bed</span>
+                        <span><i class="fa-solid fa-bath" style="color: var(--primary-teal);"></i> Bathtub</span>
+                        <span><i class="fa-solid fa-utensils" style="color: var(--primary-teal);"></i> Breakfast</span>
                     </div>
                 </div>
             </section>
 
             <aside class="booking-sidebar">
                 <div class="booking-card">
-    <div class="price-header" style="margin-bottom: 15px;">
-        <span id="det-price" style="font-size: 1.5rem; font-weight: 800;">₱0</span> 
-        <small>/ night</small>
-    </div>
-    
-    <form id="detailsBookingForm">
-        <div class="input-group">
-            <label>Check-in / Check-out</label>
-            <div class="date-inputs" style="display: flex; gap: 10px;">
-                <input type="date" id="startDate" required>
-                <input type="date" id="endDate" required>
-            </div>
-        </div>
-        
-        <div class="input-group">
-            <label>Guest Name</label>
-            <input type="text" id="guestName" placeholder="Full name for booking" required>
-        </div>
+                    <div class="price-header" style="margin-bottom: 15px;">
+                        <span id="det-price" style="font-size: 1.5rem; font-weight: 800;">₱0</span> 
+                        <small>/ night</small>
+                    </div>
+                    
+                    <form id="detailsBookingForm">
+                        <div class="input-group">
+                            <label>Check-in / Check-out</label>
+                            <div class="date-inputs" style="display: flex; gap: 10px;">
+                                <input type="date" id="startDate" required>
+                                <input type="date" id="endDate" required>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Guest Name</label>
+                            <input type="text" id="guestName" placeholder="Full name for booking" required>
+                        </div>
 
-        <div style="display: flex; gap: 10px; margin-top: 20px; margin-bottom: 20px;">
-            <button type="submit" class="btn-reserve" style="flex: 2;">Confirm Booking</button>
-            <button type="button" class="btn-cancel" onclick="resetForm()" style="flex: 1;">Cancel</button>
-        </div>
-        <p class="no-charge-text" style="text-align: center; color: #888; font-size: 0.85rem;">
-            No payment required yet
-        </p>
-        
-        <div class="total-row" style="display: flex; justify-content: space-between; margin-top: 15px; font-weight: 700;">
-            <span>Total stay cost</span>
-            <strong id="total-price">₱0</strong>
-        </div>
-    </form>
-</div>
+                        <div style="display: flex; gap: 10px; margin-top: 20px; margin-bottom: 20px;">
+                            <button type="submit" class="btn-reserve" style="flex: 2;">Confirm Booking</button>
+                            <button type="button" class="btn-cancel" onclick="resetForm()" style="flex: 1;">Cancel</button>
+                        </div>
+                        
+                        <div class="total-row" style="display: flex; justify-content: space-between; margin-top: 15px; font-weight: 700;">
+                            <span>Total stay cost</span>
+                            <strong id="total-price">₱0</strong>
+                        </div>
+                    </form>
+                </div>
             </aside>
         </div>
     </main>
