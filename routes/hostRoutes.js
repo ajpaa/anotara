@@ -9,10 +9,7 @@ const Listing = require('../models/listing');
 // =====================================================================
 router.get('/listings/my-listings', async (req, res) => {
     try {
-        // Hardcoded development bypass host ID matching host.js exactly
         const DEV_HOST_ID = "65f1a2b3c4d5e6f7a8b9c002"; 
-
-        // Query matching your schema fields
         const myProperties = await Listing.find({ host: DEV_HOST_ID });
         res.status(200).json(myProperties);
     } catch (err) {
@@ -26,7 +23,6 @@ router.get('/listings/my-listings', async (req, res) => {
 // =====================================================================
 router.post('/listings/create', async (req, res) => {
     try {
-        // Enforce a rock-solid, valid 24-character hex string for testing
         const VALID_DEV_HOST_ID = "65f1a2b3c4d5e6f7a8b9c002";
 
         const newListing = new Listing({
@@ -34,12 +30,11 @@ router.post('/listings/create', async (req, res) => {
             price: Number(req.body.price) || 0,
             type: req.body.type || "Property",
             description: req.body.description || "",
-            locationID: req.body.locationID || "Not Specified", // Correct String type field mapping
+            locationID: req.body.locationID || "Not Specified",
+            host: (req.body.host && req.body.host.trim() !== "") ? req.body.host : VALID_DEV_HOST_ID, 
             
-            // Force the fallback if hostId is missing, empty, or undefined
-            host: (req.body.hostId && req.body.hostId.trim() !== "") ? req.body.hostId : VALID_DEV_HOST_ID, 
-            
-            image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80'
+            // FIXED: Now reads the image field sent from the frontend form
+            image: req.body.image || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80'
         });
 
         const savedItem = await newListing.save();
@@ -58,20 +53,20 @@ router.put('/listings/edit/:id', async (req, res) => {
     try {
         const DEV_HOST_ID = "65f1a2b3c4d5e6f7a8b9c002"; 
 
-        // We target fields explicitly to make sure everything maps cleanly
         const updatePayload = {
             name: req.body.name,         
             price: Number(req.body.price), 
             locationID: req.body.locationID,    
             type: req.body.type,
+            image: req.body.image, // FIXED: Added this line to include image tracking inside updates
             description: req.body.description,
-            host: DEV_HOST_ID // Explicitly pass the host relation so validation doesn't flag it missing
+            host: DEV_HOST_ID 
         };
 
         const updatedItem = await Listing.findByIdAndUpdate(
             req.params.id,
             { $set: updatePayload }, 
-            { new: true, runValidators: false } // FIX: Turn off strict validator flag during dev feature testing
+            { new: true, runValidators: false }
         );
 
         if (!updatedItem) {
@@ -82,7 +77,6 @@ router.put('/listings/edit/:id', async (req, res) => {
         res.status(200).json(updatedItem);
 
     } catch (err) {
-        // This log prints the EXACT reason Mongoose is complaining into your terminal console!
         console.error("💥 MONGO UPDATE REJECTED:", err.message);
         res.status(400).json({ error: "Database update verification failure: " + err.message });
     }
