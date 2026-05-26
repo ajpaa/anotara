@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ano Tara? | Profile Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <nav class="topbar">
+        <div class="logo">Ano Tara?</div>
+        <div class="nav-icons">
+            <a href="/host" title="Home"><i class="fa-solid fa-house"></i></a>
+            <!-- <a href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="/favorites" title="Favorites"><i class="fa-solid fa-heart"></i></a> -->
+            <a href="/host-profile" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
+        </div>
+    </nav>
+
+    <main class="dashboard-grid">
+        <div class="left-column">
+            <div class="guest-profile" style="background: #55b2b2; color: white; padding: 30px; border-radius: 15px; text-align: center;">
+                <img src="https://cdn-icons-png.flaticon.com/512/12225/12225935.png" alt="User Profile Pic" width="120" style="margin-bottom: 10px;">
+                <div class="guest-profile-text">
+                    <!-- <p id="guest-name" style="font-size: 1.2rem; font-weight: bold;">Loading Name...</p> -->
+                    <p>Host</p>
+                    
+                    <a href="javascript:void(0);" onclick="handleLogout()" title="Back to Login" style="color: #fff; text-decoration: underline; font-size: 0.9rem;">
+                        Log Out <i class="fa-solid fa-right-from-bracket"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="calendar-book-filter">
+                <div class="calendar-book-header">
+                    <button id="prevBtn"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="month-year"></div>
+                    <button id="nextBtn"><i class="fa-solid fa-chevron-right"></i></button>
+                </div> 
+                <div class="days">
+                    <div class="day">Mon</div><div class="day">Tue</div><div class="day">Wed</div>
+                    <div class="day">Thu</div><div class="day">Fri</div><div class="day">Sat</div><div class="day">Sun</div>
+                </div>
+                <div class="dates"></div>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <h2><i class="fa-solid fa-city"></i> Host Bookings</h2>
+            <div class="guest-bookings" id="guest-bookings">
+                </div>
+        </div>
+    </main>
+
+    <script src="js/host-profile.js"></script>
+</body>
+</html>

@@ -106,7 +106,7 @@ async function fetchHostListings() {
             const escapedLoc = (listing.locationID || "Not Specified").replace(/'/g, "\\'");
             const escapedType = (listing.type || "Property").replace(/'/g, "\\'");
             const escapedDesc = (listing.description || "").replace(/'/g, "\\'").replace(/\n/g, " ");
-            const escapedContact = (listing.contact || "").replace(/'/g, "\\'"); // Escaped contact variable
+            const escapedContact = (listing.contact || "").replace(/'/g, "\\'"); 
 
             const currentImg = (listing.images && listing.images.length > 0) ? listing.images[0] : (listing.image || '');
             const escapedImg = currentImg.replace(/'/g, "\\'");
@@ -115,30 +115,37 @@ async function fetchHostListings() {
             const displayImg = currentImg || 'https://placehold.co/600x400?text=Property+Preview';
 
             card.innerHTML = `
+                <div class="listing-card">
                 <img src="${displayImg}" alt="${listing.name}">
+                
                 <div class="card-info">
                     <h3>${listing.name}</h3>
-                    <p class="loc"><i class="fa-solid fa-location-dot"></i> ${listing.locationID} • ${listing.type || 'Property'}</p>
-                    <p class="loc" style="margin-top: 5px; font-size: 0.8rem; height: 35px; overflow: hidden;">${listing.description || 'No description provided.'}</p>
                     
-                    <div class="price-row" style="margin-top: 15px; border-top: 1px solid #f0f0f0; padding-top: 10px;">
+                    <p class="loc">
+                        <i class="fa-solid fa-location-dot"></i> ${listing.locationID} • ${listing.type || 'Property'}
+                    </p>
+                    
+                    <p class="desc-text">${listing.description || 'No description provided.'}</p>
+                    
+                    <div class="price-row">
                         <div class="price">
                             <strong>₱${displayPrice}</strong> / night
                         </div>
                     </div>
 
-                    <div class="host-card-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
-                        <button class="btn-approve" style="padding: 8px;" 
+                    <div class="host-card-actions">
+                        <button class="btn-approve" 
                             onclick="setupEditForm('${listing._id}', '${escapedName}', ${listing.price || 0}, '${escapedLoc}', '${escapedImg}', '${escapedType}', '${escapedDesc}', '${escapedContact}')">
                             <i class="fa-solid fa-pen-to-square"></i> Edit
                         </button>
-                        <button class="btn-reject" style="padding: 8px; margin: 0;" onclick="deleteListing('${listing._id}')">
+                        <button class="btn-reject" onclick="deleteListing('${listing._id}')">
                             <i class="fa-solid fa-trash-can"></i> Delete
                         </button>
                     </div>
                 </div>
+            </div>
             `;
-            gridContainer.appendChild(card);
+            gridContainer.prepend(card);
         });
 
     } catch (err) {
@@ -161,6 +168,11 @@ function toggleForm() {
         document.getElementById("listing-form").reset();
         document.getElementById("form-listing-id").value = "";
         document.getElementById("form-location").selectedIndex = 0; 
+        
+        // Fix: Reset the property type dropdown to the placeholder option
+        const typeDropdown = document.getElementById("form-type");
+        if (typeDropdown) typeDropdown.selectedIndex = 0;
+
         document.getElementById("form-title").innerText = "Add a Listing";
         document.querySelector(".teal-submit-btn").innerText = "Save Listing Entry";
     }
@@ -181,6 +193,11 @@ async function handleCancel() {
         document.getElementById("listing-form").reset();
         document.getElementById("form-listing-id").value = "";
         document.getElementById("form-location").selectedIndex = 0; 
+        
+        // Fix: Reset the property type dropdown to the placeholder option
+        const typeDropdown = document.getElementById("form-type");
+        if (typeDropdown) typeDropdown.selectedIndex = 0;
+
         document.getElementById("form-title").innerText = "Add an Accommodation";
         document.querySelector(".teal-submit-btn").innerText = "Save Real Estate Data Entry";
     }
@@ -199,10 +216,13 @@ function setupEditForm(id, name, price, locationID, image, type, desc, contact) 
     document.getElementById("form-price").value = Number(price); 
     document.getElementById("form-location").value = locationID; 
     document.getElementById("form-image").value = image; 
-    document.getElementById("form-type").value = type;
     document.getElementById("form-desc").value = desc;
     
-    // Autofills the target input on edit mode trigger
+    // Note: This automatically matches and selects the right dropdown option 
+    // as long as `type` matches the exact string value attribute of your HTML option tags (e.g., 'villa', 'apartment').
+    const typeDropdown = document.getElementById("form-type");
+    if (typeDropdown) typeDropdown.value = type;
+    
     const contactInput = document.getElementById("form-contact");
     if (contactInput) contactInput.value = contact || "";
 
@@ -226,10 +246,10 @@ async function handleFormSubmit(e) {
         name: document.getElementById("form-name").value,
         price: finalPrice, 
         locationID: document.getElementById("form-location").value,
-        type: document.getElementById("form-type").value,
+        type: document.getElementById("form-type").value, // Captures selected option cleanly
         image: document.getElementById("form-image").value, 
         description: document.getElementById("form-desc").value,
-        contact: document.getElementById("form-contact").value, // Captured value sent to database
+        contact: document.getElementById("form-contact").value, 
         host: CURRENT_HOST_ID 
     };
 

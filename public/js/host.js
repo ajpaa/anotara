@@ -20,6 +20,7 @@ const CURRENT_HOST_ID = parsedSessionData.hostProfileId;
 window.updateBookingStatus = updateBookingStatus;
 window.closeStatusModal = closeStatusModal;
 window.closeConfirmModal = closeConfirmModal;
+window.deleteListingFromBooking = deleteListingFromBooking; // Exposed globally for onclick access
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchIncomingRequests();
@@ -61,6 +62,7 @@ async function fetchIncomingRequests() {
             let listingName = "Unknown Accommodation Title";
             let displayPrice = "0";
             let listingImg = 'https://placehold.co/600x400?text=Listing+Preview';
+            let listingId = booking.listingId || (details ? details._id : null);
 
             if (details) {
                 listingName = details.name || listingName;
@@ -72,10 +74,13 @@ async function fetchIncomingRequests() {
 
             const guestIdentifier = booking.guestName || 'Anonymous Guest';
 
-            // 🎯 DATE FORMATTING: Convert UTC timestamps to localized date strings
             const options = { year: 'numeric', month: 'short', day: 'numeric' };
             const formattedStart = booking.startDate ? new Date(booking.startDate).toLocaleDateString(undefined, options) : 'N/A';
             const formattedEnd = booking.endDate ? new Date(booking.endDate).toLocaleDateString(undefined, options) : 'N/A';
+
+            // --- DELETION GUARD RULE ---
+            // If the reservation is active (pending or approved), deletion is locked.
+            const totalActiveBookings = (booking.status === 'pending' || booking.status === 'approved');
 
             card.innerHTML = `
                 <img src="${listingImg}" alt="${listingName}" style="width: 100%; height: 200px; object-fit: cover;">
@@ -116,6 +121,18 @@ async function fetchIncomingRequests() {
                             Reservation Processed
                         </div>
                     `}
+
+                    <div class="host-deletion-tier" style="margin-top: 5px; border-top: 1px solid #eee; padding-top: 12px;">
+                        ${totalActiveBookings ? `
+                            <button class="btn-reject" disabled style="width: 100%; padding: 10px; background: #e4e4e4; color: #aaa; border: none; border-radius: 8px; font-weight: 600; cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                                <i class="fa-solid fa-lock"></i> Delete Locked (Active Booking)
+                            </button>
+                        ` : `
+                            <button class="btn-reject" onclick="deleteListingFromBooking('${listingId}')" style="width: 100%; padding: 10px; background: #ff5a5f; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                                <i class="fa-solid fa-trash-can"></i> Delete Property
+                            </button>
+                        `}
+                    </div>
                 </div>
             `;
             container.appendChild(card);
@@ -157,7 +174,38 @@ async function updateBookingStatus(bookingId, decision) {
 }
 
 // ==========================================
-// 4. SYSTEM POPUP MODAL CONTROL LOGIC
+// 4. PROPERTY DELETION HANDLER
+// ==========================================
+async function deleteListingFromBooking(listingId) {
+    if (!listingId || listingId === "null") {
+        showStatusModal("Error", "Could not locate a valid internal identifier link for this property entry record.");
+        return;
+    }
+
+    const clearToDelete = await showConfirmModal("Are you sure you want to completely remove this listing registration property? This action is permanent.");
+    if (!clearToDelete) return;
+
+    try {
+        // Interacts with your existing Express DELETE /api/host/listings/delete/:id endpoint
+        const res = await fetch(`/api/host/listings/delete/${listingId}`, {
+            method: "DELETE"
+        });
+
+        if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Database rejected removal query parameters.");
+        }
+
+        showStatusModal("Success", "The property registration has been permanently wiped from listings.");
+        fetchIncomingRequests(); // Reload dashboard container layouts
+    } catch (err) {
+        console.error("Error executing property deletion routing:", err);
+        showStatusModal("Error", err.message);
+    }
+}
+
+// ==========================================
+// 5. SYSTEM POPUP MODAL CONTROL LOGIC
 // ==========================================
 function showStatusModal(title, message) {
     const modal = document.getElementById("status-modal");

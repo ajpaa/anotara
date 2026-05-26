@@ -185,9 +185,9 @@ authForm.addEventListener('submit', async (e) => {
                 if (result.role === 'admin') {
                     window.location.href = '/admin';
                 } else if (result.role === 'host') {
-                    window.location.href = '/host.html';
+                    window.location.href = '/host';
                 } else {
-                    window.location.href = '/guest.html';
+                    window.location.href = '/guest';
                 }
             }, 1000);
 

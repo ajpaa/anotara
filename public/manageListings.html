@@ -13,10 +13,10 @@
     <nav class="topbar">
         <div class="logo">Ano Tara?</div>
         <div class="nav-icons">
-            <a href="guest.html" title="Home"><i class="fa-solid fa-house"></i></a>
-            <a href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
-            <a href="favorites.html" title="Favorites"><i class="fa-solid fa-heart"></i></a>
-            <a href="profile.html" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
+            <a href="/host" title="Home"><i class="fa-solid fa-house"></i></a>
+            <!-- <a href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="favorites.html" title="Favorites"><i class="fa-solid fa-heart"></i></a> -->
+            <a href="/host-profile" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
         </div>
     </nav>
 
@@ -68,7 +68,16 @@
                 </div>    
 
                 <div class="input-group-v2">
-                    <input type="text" id="form-type" placeholder="Property Type (Villa, Apartment)" required>
+                    <select id="form-type" required>
+                        <option value="" disabled selected>Select Property Type</option>
+                        <option value="Villa">Villa</option>
+                        <option value="Apartment">Apartment</option>
+                        <option value="House">House</option>
+                        <option value="Condominium">Condominium </option>
+                        <option value="Condominium">Guest Room </option>
+                        <option value="Dorm">Dorm</option>
+
+                    </select>
                 </div>
                 <div class="input-group-v2"><input type="url" id="form-image" placeholder="Image URL (e.g., https://images.unsplash.com/photo-...)"></div>
                 <div class="input-group-v2"><input type="text" id="form-desc" placeholder="Write an enticing summary description..."></div>

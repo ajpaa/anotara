@@ -58,7 +58,22 @@ router.post('/signup', async (req, res) => {
             }
         }
 
-        res.status(201).json(signupPayload);
+        // 🎯 FIX: Explicitly assign user parameters to the Express Session store
+        req.session.user = {
+            _id: signupPayload._id,
+            username: signupPayload.username,
+            role: signupPayload.role,
+            hostProfileId: signupPayload.hostProfileId || null
+        };
+
+        // Save session state explicitly before dispatching data back to the browser
+        req.session.save((err) => {
+            if (err) {
+                console.error("Session Save Error during signup:", err);
+                return res.status(500).json({ message: "Account created but failed to establish session context." });
+            }
+            return res.status(201).json(signupPayload);
+        });
 
     } catch (err) {
         console.error("Signup Crash Error Log:", err);
@@ -91,7 +106,22 @@ router.post('/login', async (req, res) => {
             }
         }
 
-        res.status(200).json(responsePayload);
+        // 🎯 FIX: Explicitly assign user parameters to the Express Session store
+        req.session.user = {
+            _id: responsePayload._id,
+            username: responsePayload.username,
+            role: responsePayload.role,
+            hostProfileId: responsePayload.hostProfileId || null
+        };
+
+        // Save session state explicitly before dispatching data back to the browser
+        req.session.save((err) => {
+            if (err) {
+                console.error("Session Save Error during login:", err);
+                return res.status(500).json({ message: "Failed to initialize server login session context." });
+            }
+            return res.status(200).json(responsePayload);
+        });
 
     } catch (err) {
         res.status(500).json({ message: "Server encountered a breakdown during login: " + err.message });
