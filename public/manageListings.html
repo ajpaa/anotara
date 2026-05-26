@@ -1,9 +1,9 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ano Tara? | Guest Dashboard</title>
+    <title>Ano Tara? | Host Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -63,8 +63,13 @@
                         <option value="Valenzuela">Valenzuela</option>
                     </select>
                 </div>
+               <div class="input-group-v2">
+                    <input type="tel" id="form-contact" placeholder="Contact number (e.g., 09123456789)" required>
+                </div>    
 
-                <div class="input-group-v2"><input type="text" id="form-type" placeholder="Property Type (e.g., Villa, Apartment)" required></div>
+                <div class="input-group-v2">
+                    <input type="text" id="form-type" placeholder="Property Type (Villa, Apartment)" required>
+                </div>
                 <div class="input-group-v2"><input type="url" id="form-image" placeholder="Image URL (e.g., https://images.unsplash.com/photo-...)"></div>
                 <div class="input-group-v2"><input type="text" id="form-desc" placeholder="Write an enticing summary description..."></div>
                 <button type="submit" class="teal-submit-btn">Save Real Estate Data Entry</button>

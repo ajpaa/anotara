@@ -18,13 +18,17 @@ router.get("/", async (req, res) => {
 // ==========================================
 // 2. CREATE: Guest submits a booking request
 // ==========================================
+// ==========================================
+// 2. CREATE: Guest submits a booking request
+// ==========================================
 router.post('/', async (req, res) => {
     try {
-        const { listingId, guest, guestName, startDate, endDate } = req.body;
+        // FIX: Extract guestId from the request body instead of guest
+        const { listingId, guestId, guestName, startDate, endDate } = req.body;
         
         const newBooking = new Booking({
             listingId,
-            guest,
+            guestId,      // FIX: Map it explicitly to match your Mongoose schema property
             guestName,
             startDate,
             endDate,
