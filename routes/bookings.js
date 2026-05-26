@@ -109,7 +109,7 @@ router.get('/host/:hostID', async (req, res) => {
 // ==========================================
 router.get('/guest/:guestId', async (req, res) => {
     try {
-        const bookings = await Booking.find({ guest: req.params.guestId })
+        const bookings = await Booking.find({ guestId: req.params.guestId })
             .populate('listingId'); 
         res.json(bookings);
     } catch (err) {

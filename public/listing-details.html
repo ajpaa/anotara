@@ -9,43 +9,44 @@
 </head>
 <body class="details-page">
 
-<nav class="topbar">
-    <div class="logo" onclick="window.location.href='guest.html'">Ano Tara?</div>
-    <div class="nav-icons">
-        <a href="guest.html"><i class="fa-solid fa-house"></i></a>
-        <a href="guest.html"><i class="fa-solid fa-magnifying-glass"></i></a>
-        <a href="favorites.html"><i class="fa-solid fa-heart"></i></a>
-        <a href="profile.html"><i class="fa-solid fa-circle-user"></i></a>
-    </div>
-</nav>
+    <nav class="topbar">
+        <div class="nav-icons">
+            <a href="guest.html"><i class="fa-solid fa-house"></i></a>
+            <a href="guest.html"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="favorites.html"><i class="fa-solid fa-heart"></i></a>
+            <a href="profile.html"><i class="fa-solid fa-circle-user"></i></a>
+        </div>
+    </nav>
 
     <main class="details-container">
         <header class="details-header">
             <h1 id="det-title">Loading property...</h1>
             <div class="header-meta">
-                <span id="det-loc"></span>
-                <span class="rating"><i class="fa-solid fa-star"></i> 4.9 (New)</span>
-            </div>
-            <div class="details-tabs">
-                <span class="tab active">Description</span>
+                <span id="det-loc"><i class="fa-solid fa-location-dot"></i> Loading location...</span>
+                <span class="rating" style="color: #f39c12;"><i class="fa-solid fa-star"></i> 4.9 (New)</span>
             </div>
         </header>
 
-        <div class="main-layout" style="display: grid; grid-template-columns: 1fr 350px; gap: 40px;">
-            
+        <div class="details-tabs" style="display: flex; gap: 30px; margin: 20px 0; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+            <span class="tab active" style="color: var(--primary-teal); border-bottom: 2px solid var(--primary-teal); padding-bottom: 8px; cursor: pointer;">Description</span>
+            <span class="tab" style="color: #666; cursor: pointer;">Features</span>
+            <span class="tab" style="color: #666; cursor: pointer;">Virtual Tour</span>
+        </div>
+
+        <div class="details-grid" style="display: grid; grid-template-columns: 1fr 350px; gap: 40px;">
             <section class="content-main">
                 <div class="image-gallery">
-                    <img id="det-img" src="..." alt="Property">
+                    <img id="det-img" src="https://placehold.co/800x500?text=Loading+Image" alt="Property" style="width: 100%; border-radius: 15px;">
                 </div>
 
-                <div class="description-section" style="margin-top: 20px;">
+                <div class="description-section" style="margin-top: 30px;">
                     <h2>About this <span id="det-type" style="color: var(--primary-teal);">stay</span></h2>
-                    <p id="det-desc">Fetching details...</p>
+                    <p id="det-desc" style="line-height: 1.6; color: #444;">Fetching latest information from host...</p>
                 </div>
 
-                <div class="amenities-section" style="margin-top: 20px;">
+                <div class="amenities-section" style="margin-top: 30px;">
                     <h3>What this place offers</h3>
-                    <div class="amenity-grid">
+                    <div class="amenity-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
                         <span><i class="fa-solid fa-wifi" style="color: var(--primary-teal);"></i> Fast WiFi</span>
                         <span><i class="fa-solid fa-bed" style="color: var(--primary-teal);"></i> King Bed</span>
                         <span><i class="fa-solid fa-bath" style="color: var(--primary-teal);"></i> Bathtub</span>
@@ -55,32 +56,32 @@
             </section>
 
             <aside class="booking-sidebar">
-                <div class="booking-card">
+                <div class="booking-card" style="border: 1px solid #e0e0e0; padding: 24px; border-radius: 15px; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 100px;">
                     <div class="price-header" style="margin-bottom: 15px;">
                         <span id="det-price" style="font-size: 1.5rem; font-weight: 800;">₱0</span> 
                         <small>/ night</small>
                     </div>
                     
                     <form id="detailsBookingForm">
-                        <div class="input-group">
+                        <div class="input-group" style="margin-bottom: 15px;">
                             <label>Check-in / Check-out</label>
-                            <div class="date-inputs" style="display: flex; gap: 10px;">
-                                <input type="date" id="startDate" required>
-                                <input type="date" id="endDate" required>
+                            <div class="date-inputs" style="display: flex; gap: 10px; margin-top: 5px;">
+                                <input type="date" id="startDate" required style="width: 100%; padding: 8px;">
+                                <input type="date" id="endDate" required style="width: 100%; padding: 8px;">
                             </div>
                         </div>
                         
-                        <div class="input-group">
+                        <div class="input-group" style="margin-bottom: 15px;">
                             <label>Guest Name</label>
-                            <input type="text" id="guestName" placeholder="Full name for booking" required>
+                            <input type="text" id="guestName" placeholder="Full name for booking" required style="width: 100%; padding: 10px; box-sizing: border-box;">
                         </div>
 
-                        <div style="display: flex; gap: 10px; margin-top: 20px; margin-bottom: 20px;">
-                            <button type="submit" class="btn-reserve" style="flex: 2;">Confirm Booking</button>
-                            <button type="button" class="btn-cancel" onclick="resetForm()" style="flex: 1;">Cancel</button>
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button type="submit" class="btn-reserve" style="flex: 1; background: var(--primary-teal); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer;">Confirm Booking</button>
+                            <button type="button" class="btn-cancel" onclick="resetForm()" style="flex: 1; padding: 15px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">Cancel</button>
                         </div>
                         
-                        <div class="total-row" style="display: flex; justify-content: space-between; margin-top: 15px; font-weight: 700;">
+                        <div class="total-row" style="display: flex; justify-content: space-between; margin-top: 20px; font-weight: 700; border-top: 1px solid #eee; padding-top: 15px;">
                             <span>Total stay cost</span>
                             <strong id="total-price">₱0</strong>
                         </div>
