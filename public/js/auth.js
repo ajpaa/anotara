@@ -183,7 +183,7 @@ authForm.addEventListener('submit', async (e) => {
             // Short pause so user sees the success message, then redirect
             setTimeout(() => {
                 if (result.role === 'admin') {
-                    window.location.href = '/admin.html';
+                    window.location.href = '/admin';
                 } else if (result.role === 'host') {
                     window.location.href = '/host.html';
                 } else {

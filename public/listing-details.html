@@ -5,19 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listing Details | Ano Tara?</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="details-page">
 
-<nav class="topbar">
-    <div class="logo" onclick="window.location.href='guest.html'">Ano Tara?</div>
-    <div class="nav-icons">
-        <a href="guest.html"><i class="fa-solid fa-house"></i></a>
-        <a href="guest.html"><i class="fa-solid fa-magnifying-glass"></i></a>
-        <a href="favorites.html"><i class="fa-solid fa-heart"></i></a>
-        <a href="profile.html"><i class="fa-solid fa-circle-user"></i></a>
+    <nav class="topbar" id="main-navbar">
+        <div class="logo" id="nav-logo">Ano Tara?</div>
+        <div class="nav-icons" id="main-nav-icons"></div>
+        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMenu()">
+            <i class="fa-solid fa-bars" id="hamburger-icon"></i>
+        </button>
+        <div class="mobile-menu" id="mobile-menu"></div>
+    </nav>
+
+    <div id="admin-banner" class="admin-banner-bar">
+        <span style="color: #f57f17; font-weight: 700;">
+            <i class="fa-solid fa-shield-halved"></i> You are viewing this listing as Admin
+        </span>
+        <button id="admin-delete-top-btn" class="btn-delete-listing">
+            <i class="fa-solid fa-trash"></i> Delete This Listing
+        </button>
     </div>
-</nav>
 
     <main class="details-container">
         <header class="details-header">
@@ -32,17 +41,14 @@
         </header>
 
         <div class="main-layout" style="display: grid; grid-template-columns: 1fr 350px; gap: 40px;">
-            
             <section class="content-main">
                 <div class="image-gallery">
                     <img id="det-img" src="..." alt="Property">
                 </div>
-
                 <div class="description-section" style="margin-top: 20px;">
                     <h2>About this <span id="det-type" style="color: var(--primary-teal);">stay</span></h2>
                     <p id="det-desc">Fetching details...</p>
                 </div>
-
                 <div class="amenities-section" style="margin-top: 20px;">
                     <h3>What this place offers</h3>
                     <div class="amenity-grid">
@@ -57,10 +63,9 @@
             <aside class="booking-sidebar">
                 <div class="booking-card">
                     <div class="price-header" style="margin-bottom: 15px;">
-                        <span id="det-price" style="font-size: 1.5rem; font-weight: 800;">₱0</span> 
+                        <span id="det-price" style="font-size: 1.5rem; font-weight: 800;">₱0</span>
                         <small>/ night</small>
                     </div>
-                    
                     <form id="detailsBookingForm">
                         <div class="input-group">
                             <label>Check-in / Check-out</label>
@@ -69,17 +74,14 @@
                                 <input type="date" id="endDate" required>
                             </div>
                         </div>
-                        
                         <div class="input-group">
                             <label>Guest Name</label>
                             <input type="text" id="guestName" placeholder="Full name for booking" required>
                         </div>
-
                         <div style="display: flex; gap: 10px; margin-top: 20px; margin-bottom: 20px;">
                             <button type="submit" class="btn-reserve" style="flex: 2;">Confirm Booking</button>
                             <button type="button" class="btn-cancel" onclick="resetForm()" style="flex: 1;">Cancel</button>
                         </div>
-                        
                         <div class="total-row" style="display: flex; justify-content: space-between; margin-top: 15px; font-weight: 700;">
                             <span>Total stay cost</span>
                             <strong id="total-price">₱0</strong>
@@ -89,6 +91,17 @@
             </aside>
         </div>
     </main>
+
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-box">
+            <h3>Delete Listing?</h3>
+            <p>This action cannot be undone. Are you sure you want to delete this listing?</p>
+            <div class="modal-actions">
+                <button class="modal-btn danger-btn" id="confirmDeleteBtn">Yes, Delete</button>
+                <button class="modal-btn cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <script src="js/details.js"></script>
 </body>

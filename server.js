@@ -44,7 +44,9 @@ app.use("/api/users", require("./routes/users"));
 // 5. FRONTEND ROUTING
 app.get('/guest', (req, res) => res.sendFile(path.join(__dirname, 'public', 'guest.html')));
 app.get('/host', (req, res) => res.sendFile(path.join(__dirname, 'public', 'host.html')));
-app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
+app.get("/admin", (req, res) =>
+  res.sendFile(path.join(__dirname, "public", "admin", "admin.html")),
+);
 app.get('/manageListings.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'manageListings.html')));
 
 // 6. START SERVER
