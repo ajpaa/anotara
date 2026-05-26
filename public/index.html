@@ -1,64 +1,106 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ano Tara? | Welcome</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body class="auth-body">
-
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="auth-body">
     <div class="split-auth-container">
-        <div class="auth-form-side">
-            <div class="auth-header-content">
-                <h2 class="logo-teal">Ano Tara?</h2>
-                <h1 id="auth-title">Book your perfect vacation!</h1>
-            </div>
-
-            <form id="authForm">
-                <div class="input-group-v2">
-                    <input type="text" name="username" placeholder="Full name" required>
-                </div>
-                <div class="input-group-v2 password-wrapper">
-                    <input type="password" name="password" placeholder="Password" required>
-                    <i class="fa-regular fa-eye toggle-pass"></i>
-                </div>
-
-                <div id="role-section" style="display: none;">
-                    <select name="role">
-                        <option value="guest">Guest</option>
-                        <option value="host">Host</option>
-                    </select>
-                </div>
-
-                <button type="submit" id="submit-btn" class="teal-submit-btn">Start</button>
-            </form>
-
-            <p id="toggle-text" class="toggle-auth">
-                Already have an account? <span onclick="toggleAuth()">Log In</span>
-            </p>
+      <div class="auth-form-side">
+        <div class="auth-header-content">
+          <h2 class="logo-teal">Ano Tara?</h2>
+          <h1 id="auth-title">Book your perfect vacation!</h1>
+          <p id="auth-subtitle">Create an account to get started.</p>
         </div>
 
-        <div class="auth-image-side">
-            <div class="image-wrapper">
-                <img src="https://i.pinimg.com/1200x/a8/2a/ca/a82acacb6ea75cf2a63e62f50657564e.jpg" alt="Scenery">
-                <div class="img-tag tag-1">
-                    <i class="fa-solid fa-house"></i>
-                    <div>
-                        <span>Garsia Village</span>
-                        <small>Greens Residence</small>
-                    </div>
-                </div>
-                <div class="img-tag tag-2">
-                    <span>1.2 km</span>
-                    <small>left to accommodation</small>
-                </div>
+        <div id="auth-message" class="auth-message" style="display: none"></div>
+        <form id="authForm" novalidate>
+          <div class="input-group-v2">
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Username"
+            />
+            <span class="field-error" id="err-username"></span>
+          </div>
+
+          <div class="input-group-v2">
+            <div class="password-wrapper">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Password"
+              />
+              <i class="fa-regular fa-eye toggle-pass" id="togglePass"></i>
             </div>
+            <span class="field-error" id="err-password"></span>
+          </div>
+
+          <div class="input-group-v2" id="confirm-pass-group">
+            <div class="password-wrapper">
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="Confirm Password"
+              />
+              <i class="fa-regular fa-eye toggle-pass" id="toggleConfirm"></i>
+            </div>
+            <span class="field-error" id="err-confirm"></span>
+          </div>
+
+          <div class="input-group-v2" id="role-section">
+            <select name="role" id="role" class="role-select">
+              <option value="" disabled selected>I am a...</option>
+              <option value="guest">Guest — I want to book places</option>
+              <option value="host">Host — I want to list my property</option>
+            </select>
+            <span class="field-error" id="err-role"></span>
+          </div>
+
+          <button type="submit" id="submit-btn" class="teal-submit-btn">
+            Start
+          </button>
+        </form>
+
+        <p id="toggle-text" class="toggle-auth">
+          Already have an account? <span onclick="toggleAuth()">Log In</span>
+        </p>
+      </div>
+
+      <div class="auth-image-side">
+        <div class="image-wrapper">
+          <img
+            src="https://i.pinimg.com/1200x/a8/2a/ca/a82acacb6ea75cf2a63e62f50657564e.jpg"
+            alt="Scenery"
+          />
+          <div class="img-tag tag-1">
+            <i class="fa-solid fa-house"></i>
+            <div>
+              <span>Garsia Village</span>
+              <small>Greens Residence</small>
+            </div>
+          </div>
+          <div class="img-tag tag-2">
+            <span>1.2 km</span>
+            <small>left to accommodation</small>
+          </div>
         </div>
+      </div>
     </div>
 
     <script src="js/auth.js"></script>
-</body>
+  </body>
 </html>

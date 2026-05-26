@@ -27,6 +27,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/listings', require('./routes/listings'));
 app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/host', require('./routes/hostRoutes'));
+app.use("/api/users", require("./routes/users"));
 
 // 5. FRONTEND ROUTING (Redirects users to specific pages)
 app.get('/guest', (req, res) => res.sendFile(path.join(__dirname, 'public', 'guest.html')));

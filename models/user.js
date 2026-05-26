@@ -6,4 +6,4 @@ const UserSchema = new mongoose.Schema({
   contactInfo: String,
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Listing' }]
 });
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.models.User || mongoose.model("User", UserSchema);
