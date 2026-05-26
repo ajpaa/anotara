@@ -42,9 +42,12 @@ app.use('/api/host', hostRoutes);
 app.use("/api/users", require("./routes/users"));
 
 // 5. FRONTEND ROUTING
+// These are now unique and correctly pointing to your files
 app.get('/guest', (req, res) => res.sendFile(path.join(__dirname, 'public', 'guest.html')));
 app.get('/host', (req, res) => res.sendFile(path.join(__dirname, 'public', 'host.html')));
-app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
+
+// Pointing to the new public/admin/admin.html file
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin', 'admin.html')));
 app.get('/manageListings', (req, res) => res.sendFile(path.join(__dirname, 'public', 'manageListings.html')));
 
 // 6. START SERVER

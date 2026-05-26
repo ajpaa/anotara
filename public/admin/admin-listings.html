@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ano Tara? | Manage Listings</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+  <body>
+    <nav class="topbar">
+      <div class="logo">Ano Tara?</div>
+      <div class="nav-icons" id="admin-nav-icons">
+        <a href="admin.html" title="Dashboard" class="nav-link admin-nav"
+          ><i class="fa-solid fa-gauge"></i
+        ></a>
+        <a
+          href="admin-listings.html"
+          title="Listings"
+          class="nav-link admin-nav active-link"
+          ><i class="fa-solid fa-house"></i
+        ></a>
+        <a
+          href="admin-bookings.html"
+          title="Bookings"
+          class="nav-link admin-nav"
+          ><i class="fa-solid fa-calendar-check"></i
+        ></a>
+        <a href="admin-users.html" title="Users" class="nav-link admin-nav"
+          ><i class="fa-solid fa-users"></i
+        ></a>
+        <a
+          href="#"
+          title="Logout"
+          class="nav-link admin-nav logout-btn"
+          onclick="logout()"
+          ><i class="fa-solid fa-right-from-bracket"></i
+        ></a>
+      </div>
+      <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMenu()">
+        <i class="fa-solid fa-bars" id="hamburger-icon"></i>
+      </button>
+      <div class="mobile-menu" id="mobile-menu">
+        <a href="admin.html" class="mobile-menu-link"
+          ><i class="fa-solid fa-gauge"></i> Dashboard</a
+        >
+        <a href="admin-listings.html" class="mobile-menu-link active-link"
+          ><i class="fa-solid fa-house"></i> Listings</a
+        >
+        <a href="admin-bookings.html" class="mobile-menu-link"
+          ><i class="fa-solid fa-calendar-check"></i> Bookings</a
+        >
+        <a href="admin-users.html" class="mobile-menu-link"
+          ><i class="fa-solid fa-users"></i> Users</a
+        >
+        <a href="#" class="mobile-menu-link logout-mobile" onclick="logout()"
+          ><i class="fa-solid fa-right-from-bracket"></i> Logout</a
+        >
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-content">
+        <h1>Manage All Listings</h1>
+        <p id="listings-count">Loading listings...</p>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <div class="listings-filter-bar">
+        <div class="listings-filter-item" style="position: relative">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search by name..."
+            autocomplete="off"
+          />
+          <div id="name-suggestions" class="location-suggestions"></div>
+        </div>
+        <div class="listings-filter-divider"></div>
+        <div class="listings-filter-item">
+          <i class="fa-solid fa-hotel"></i>
+          <select id="filter-type">
+            <option value="">All Types</option>
+            <option value="house">House</option>
+            <option value="condominium">Condominium</option>
+            <option value="apartment">Apartment</option>
+            <option value="hotel">Hotel</option>
+            <option value="dorm">Dorm</option>
+            <option value="guest_room">Guest Room</option>
+          </select>
+        </div>
+        <div class="listings-filter-divider"></div>
+        <div class="listings-filter-item" style="position: relative">
+          <i class="fa-solid fa-location-dot"></i>
+          <input
+            type="text"
+            id="filter-location"
+            placeholder="Filter by location..."
+            autocomplete="off"
+          />
+          <div id="location-suggestions" class="location-suggestions"></div>
+        </div>
+        <div class="listings-filter-divider"></div>
+        <div class="listings-filter-item">
+          <i class="fa-solid fa-arrow-up-wide-short"></i>
+          <select id="filter-sort">
+            <option value="">Default</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="listings-toolbar">
+        <span id="listings-count-label">Showing 0 listings</span>
+        <div class="per-page-control">
+          <label for="per-page">Show:</label>
+          <select id="per-page">
+            <option value="10" selected>10 per page</option>
+            <option value="25">25 per page</option>
+            <option value="50">50 per page</option>
+            <option value="100">100 per page</option>
+            <option value="all">Show All</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="listings-grid" class="listings-grid-admin">
+        <p class="empty-msg">Loading listings...</p>
+      </div>
+
+      <div id="pagination" class="pagination-bar"></div>
+    </main>
+
+    <div class="modal-overlay" id="deleteModal">
+      <div class="modal-box">
+        <h3>Delete Listing?</h3>
+        <p>
+          This action cannot be undone. Are you sure you want to delete this
+          listing?
+        </p>
+        <div class="modal-actions">
+          <button class="modal-btn danger-btn" id="confirmDeleteBtn">
+            Yes, Delete
+          </button>
+          <button class="modal-btn cancel-btn" onclick="closeDeleteModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../js/admin/admin-listings.js"></script>
+  </body>
+</html>

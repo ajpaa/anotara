@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ano Tara? | Admin Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+  <body>
+    <nav class="topbar">
+      <div class="logo">Ano Tara?</div>
+
+      <div class="nav-icons" id="admin-nav-icons">
+        <a
+          href="admin.html"
+          title="Dashboard"
+          class="nav-link admin-nav active-link"
+          ><i class="fa-solid fa-gauge"></i
+        ></a>
+        <a
+          href="admin-listings.html"
+          title="Listings"
+          class="nav-link admin-nav"
+          ><i class="fa-solid fa-house"></i
+        ></a>
+        <a
+          href="admin-bookings.html"
+          title="Bookings"
+          class="nav-link admin-nav"
+          ><i class="fa-solid fa-calendar-check"></i
+        ></a>
+        <a href="admin-users.html" title="Users" class="nav-link admin-nav"
+          ><i class="fa-solid fa-users"></i
+        ></a>
+        <a
+          href="#"
+          title="Logout"
+          class="nav-link admin-nav logout-btn"
+          onclick="logout()"
+          ><i class="fa-solid fa-right-from-bracket"></i
+        ></a>
+      </div>
+
+      <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMenu()">
+        <i class="fa-solid fa-bars" id="hamburger-icon"></i>
+      </button>
+
+      <div class="mobile-menu" id="mobile-menu">
+        <a href="admin.html" class="mobile-menu-link active-link"
+          ><i class="fa-solid fa-gauge"></i> Dashboard</a
+        >
+        <a href="admin-listings.html" class="mobile-menu-link"
+          ><i class="fa-solid fa-house"></i> Listings</a
+        >
+        <a href="admin-bookings.html" class="mobile-menu-link"
+          ><i class="fa-solid fa-calendar-check"></i> Bookings</a
+        >
+        <a href="admin-users.html" class="mobile-menu-link"
+          ><i class="fa-solid fa-users"></i> Users</a
+        >
+        <a href="#" class="mobile-menu-link logout-mobile" onclick="logout()"
+          ><i class="fa-solid fa-right-from-bracket"></i> Logout</a
+        >
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-content">
+        <h1 id="admin-title">Admin Dashboard</h1>
+        <p id="admin-subtitle">Loading...</p>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <div id="admin-content">
+        <p>Loading dashboard...</p>
+      </div>
+    </main>
+
+    <div class="modal-overlay" id="deleteModal">
+      <div class="modal-box">
+        <h3>Delete Listing?</h3>
+        <p>
+          This action cannot be undone. Are you sure you want to delete this
+          listing?
+        </p>
+        <div class="modal-actions">
+          <button class="modal-btn danger-btn" id="confirmDeleteBtn">
+            Yes, Delete
+          </button>
+          <button class="modal-btn cancel-btn" onclick="closeDeleteModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../js/admin/admin-dashboard.js"></script>
+  </body>
+</html>

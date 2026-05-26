@@ -1,43 +1,136 @@
-// 1. Get listing ID from URL immediately
 const urlParams = new URLSearchParams(window.location.search);
-const listingId = urlParams.get('id');
+const listingId = urlParams.get("id");
 
-// Global variable to store price for calculations
 let pricePerNight = 0;
 
-// Redirect if no ID is found
 if (!listingId) {
-    window.location.href = 'guest.html';
+  window.location.href = "guest.html";
 }
 
-/**
- * Fetch and display listing data
- */
-async function loadListingDetails() {
-    try {
-        const res = await fetch(`/api/listings/${listingId}`);
-        if (!res.ok) throw new Error("Listing not found");
-        
-        const listing = await res.json();
-        pricePerNight = Number(listing.price || 0);
+const currentUser = JSON.parse(localStorage.getItem("user"));
 
-        // Populate elements
-        if(document.getElementById('det-title')) document.getElementById('det-title').innerText = listing.name;
-        if(document.getElementById('det-loc')) {
-            document.getElementById('det-loc').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${listing.locationID}`;
-        }
-        
-        const formattedPrice = pricePerNight.toLocaleString();
-        if(document.getElementById('det-price')) document.getElementById('det-price').innerText = `₱${formattedPrice}`;
-        
-        // Populate image, description, type
-        if(document.getElementById('det-img')) {
-            document.getElementById('det-img').src = (listing.images && listing.images.length > 0) 
-                ? listing.images[0] 
-                : (listing.image || 'https://placehold.co/800x500?text=No+Image+Available');
-        }
-        if(document.getElementById('det-desc')) document.getElementById('det-desc').innerText = listing.description || "No description provided.";
-        if(document.getElementById('det-type')) document.getElementById('det-type').innerText = listing.type || "Entire Home";
+function buildNavbar() {
+  const logo = document.getElementById("nav-logo");
+  const navIcons = document.getElementById("main-nav-icons");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  if (currentUser && currentUser.role === "admin") {
+    logo.onclick = () => (window.location.href = "/admin/admin.html");
+
+    navIcons.innerHTML = `
+            <a href="/admin/admin.html" title="Dashboard" class="nav-link admin-nav"><i class="fa-solid fa-gauge"></i></a>
+            <a href="/admin/admin-listings.html" title="Listings" class="nav-link admin-nav active-link"><i class="fa-solid fa-house"></i></a>
+            <a href="/admin/admin-bookings.html" title="Bookings" class="nav-link admin-nav"><i class="fa-solid fa-calendar-check"></i></a>
+            <a href="/admin/admin-users.html" title="Users" class="nav-link admin-nav"><i class="fa-solid fa-users"></i></a>
+            <a href="#" title="Logout" class="nav-link admin-nav logout-btn" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i></a>
+        `;
+
+    mobileMenu.innerHTML = `
+            <a href="/admin/admin.html" class="mobile-menu-link"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a href="/admin/admin-listings.html" class="mobile-menu-link active-link"><i class="fa-solid fa-house"></i> Listings</a>
+            <a href="/admin/admin-bookings.html" class="mobile-menu-link"><i class="fa-solid fa-calendar-check"></i> Bookings</a>
+            <a href="/admin/admin-users.html" class="mobile-menu-link"><i class="fa-solid fa-users"></i> Users</a>
+            <a href="#" class="mobile-menu-link logout-mobile" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        `;
+
+    document.getElementById("admin-banner").classList.add("visible");
+
+    document
+      .getElementById("admin-delete-top-btn")
+      .addEventListener("click", () => {
+        openDeleteModal();
+      });
+  } else {
+    logo.onclick = () => (window.location.href = "guest.html");
+
+    navIcons.innerHTML = `
+            <a href="guest.html"><i class="fa-solid fa-house"></i></a>
+            <a href="guest.html"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="favorites.html"><i class="fa-solid fa-heart"></i></a>
+        `;
+  }
+}
+
+function logout() {
+  localStorage.removeItem("user");
+  window.location.href = "/index.html";
+}
+
+function toggleMenu() {
+  const menu = document.getElementById("mobile-menu");
+  const icon = document.getElementById("hamburger-icon");
+  const isOpen = menu.classList.contains("menu-open");
+  if (isOpen) {
+    menu.classList.remove("menu-open");
+    icon.classList.replace("fa-xmark", "fa-bars");
+  } else {
+    menu.classList.add("menu-open");
+    icon.classList.replace("fa-bars", "fa-xmark");
+  }
+}
+
+function openDeleteModal() {
+  document.getElementById("deleteModal").classList.add("modal-active");
+}
+
+function closeDeleteModal() {
+  document.getElementById("deleteModal").classList.remove("modal-active");
+}
+
+document
+  .getElementById("confirmDeleteBtn")
+  .addEventListener("click", async () => {
+    try {
+      const res = await fetch("/api/listings/" + listingId, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        closeDeleteModal();
+        alert("Listing deleted successfully.");
+        window.location.href = "/admin/admin-listings.html";
+      } else {
+        alert("Failed to delete. Please try again.");
+      }
+    } catch (err) {
+      alert("Server error. Could not delete.");
+    }
+  });
+
+async function loadListingDetails() {
+  try {
+    const res = await fetch(`/api/listings/${listingId}`);
+    if (!res.ok) throw new Error("Listing not found");
+
+    const listing = await res.json();
+    pricePerNight = Number(listing.price || 0);
+
+    if (document.getElementById("det-title"))
+      document.getElementById("det-title").innerText = listing.name;
+
+    if (document.getElementById("det-loc")) {
+      document.getElementById("det-loc").innerHTML =
+        `<i class="fa-solid fa-location-dot"></i> ${listing.locationID}`;
+    }
+
+    const formattedPrice = pricePerNight.toLocaleString();
+    if (document.getElementById("det-price"))
+      document.getElementById("det-price").innerText = `₱${formattedPrice}`;
+
+    if (document.getElementById("det-img")) {
+      document.getElementById("det-img").src =
+        listing.images && listing.images.length > 0
+          ? listing.images[0]
+          : listing.image ||
+            "https://placehold.co/800x500?text=No+Image+Available";
+    }
+
+    if (document.getElementById("det-desc"))
+      document.getElementById("det-desc").innerText =
+        listing.description || "No description provided.";
+
+    if (document.getElementById("det-type"))
+      document.getElementById("det-type").innerText =
+        listing.type || "Entire Home";
 
         updateTotalPrice();
         
@@ -102,9 +195,9 @@ async function checkBookingApprovalStatus(listing) {
  * Calculate total price based on dates
  */
 function updateTotalPrice() {
-    const start = document.getElementById('startDate').value;
-    const end = document.getElementById('endDate').value;
-    const totalDisplay = document.getElementById('total-price');
+  const start = document.getElementById("startDate").value;
+  const end = document.getElementById("endDate").value;
+  const totalDisplay = document.getElementById("total-price");
 
     if (start && end) {
         const startDate = new Date(start);
@@ -121,32 +214,33 @@ function updateTotalPrice() {
     }
 }
 
-/**
- * Form Handling
- */
-const bookingForm = document.getElementById('detailsBookingForm');
+const bookingForm = document.getElementById("detailsBookingForm");
 if (bookingForm) {
-    document.getElementById('startDate').addEventListener('change', updateTotalPrice);
-    document.getElementById('endDate').addEventListener('change', updateTotalPrice);
+  document
+    .getElementById("startDate")
+    .addEventListener("change", updateTotalPrice);
+  document
+    .getElementById("endDate")
+    .addEventListener("change", updateTotalPrice);
 
-    bookingForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+  bookingForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-        const userSession = localStorage.getItem('user');
-        if (!userSession) {
-            alert("You must be logged in to book.");
-            window.location.href = 'login.html';
-            return;
-        }
-        const guest = JSON.parse(userSession);
+    const userSession = localStorage.getItem("user");
+    if (!userSession) {
+      alert("You must be logged in to book.");
+      window.location.href = "login.html";
+      return;
+    }
 
-        const start = document.getElementById('startDate').value;
-        const end = document.getElementById('endDate').value;
-        
-        if (new Date(start) >= new Date(end)) {
-            alert("Check-out date must be after the check-in date.");
-            return;
-        }
+    const guest = JSON.parse(userSession);
+    const start = document.getElementById("startDate").value;
+    const end = document.getElementById("endDate").value;
+
+    if (new Date(start) >= new Date(end)) {
+      alert("Check-out date must be after the check-in date.");
+      return;
+    }
 
         const bookingData = {
             listingId: listingId,
@@ -158,29 +252,32 @@ if (bookingForm) {
             status: 'pending'
         };
 
-        try {
-            const res = await fetch('/api/bookings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(bookingData)
-            });
+    try {
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookingData),
+      });
 
-            if (res.ok) {
-                alert("Booking request sent successfully!");
-                window.location.href = 'guest.html';
-            } else {
-                const errData = await res.json();
-                alert(`Booking failed: ${errData.message || "Try again."}`);
-            }
-        } catch (error) {
-            alert("Connection error.");
-        }
-    });
+      if (res.ok) {
+        alert("Booking request sent successfully!");
+        window.location.href = "guest.html";
+      } else {
+        const errData = await res.json();
+        alert(`Booking failed: ${errData.message || "Try again."}`);
+      }
+    } catch (error) {
+      alert("Connection error.");
+    }
+  });
 }
 
 function resetForm() {
-    bookingForm.reset();
-    document.getElementById('total-price').innerText = "₱0";
+  bookingForm.reset();
+  document.getElementById("total-price").innerText = "₱0";
 }
 
-document.addEventListener("DOMContentLoaded", loadListingDetails);
+document.addEventListener("DOMContentLoaded", () => {
+  buildNavbar();
+  loadListingDetails();
+});
