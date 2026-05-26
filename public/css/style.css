@@ -452,8 +452,7 @@ input[type="date"], input[type="text"] {
 
 .no-charge-text { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin: 15px 0; }
 .total-row { display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 15px; }
-  background: var(--bg-light);
-}
+
 
 .details-layout {
   display: grid;
@@ -1376,4 +1375,52 @@ input[type="date"], input[type="text"] {
 
 .listing-footer-host {
     margin-top: auto;
+}
+
+/* Container for the buttons */
+.host-card-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+/* Base button styling */
+.host-card-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Slight click animation for tactile feedback */
+.host-card-actions button:active {
+    transform: scale(0.98);
+}
+
+/* Edit Button Styles */
+.host-card-actions .btn-approve {
+    background-color: #008486; /* Warm Teal */
+    color: #ffffff;
+}
+
+.host-card-actions .btn-approve:hover {
+    background-color: #006668; /* Darker Teal */
+}
+
+/* Delete Button Styles */
+.host-card-actions .btn-reject {
+    background-color: #ff5a5f; /* Rose/Coral Red */
+    color: #ffffff;
+}
+
+.host-card-actions .btn-reject:hover {
+    background-color: #e04347; /* Darker Red */
 }

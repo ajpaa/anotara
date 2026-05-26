@@ -38,7 +38,6 @@ router.post('/signup', async (req, res) => {
             const newHost = new Host({
                 user: user._id,
                 hostName: user.username,
-                hostContactNumber: "Not Provided",
                 adminID: primaryAdmin ? primaryAdmin._id : null
             });
 

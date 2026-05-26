@@ -3,6 +3,7 @@ const router = express.Router();
 const Booking = require('../models/Booking');
 const Listing = require('../models/listing'); // Make sure your filename casing matches your file system!
 const mongoose = require('mongoose'); 
+
 // ==========================================
 // 1. READ: Get All Bookings (Root Utility)
 // ==========================================
@@ -20,14 +21,38 @@ router.get("/", async (req, res) => {
 // ==========================================
 router.post('/', async (req, res) => {
     try {
-        const { listingId, guest, guestName, startDate, endDate } = req.body;
+        const { listingId, guestId, guestName, startDate, endDate } = req.body;
         
+        // 1. Convert incoming date strings into formal JavaScript Date objects
+        const newStart = new Date(startDate);
+        const newEnd = new Date(endDate);
+
+        // Validation: Ensure checkout date is after check-in date
+        if (newStart >= newEnd) {
+            return res.status(400).json({ message: "Invalid Date Range: End date must be after start date." });
+        }
+
+        // 2. Query Atlas for ANY already 'approved' bookings overlapping this time window
+        const conflictingBooking = await Booking.findOne({
+            listingId: listingId,
+            status: 'approved',
+            startDate: { $lt: newEnd },
+            endDate: { $gt: newStart }
+        });
+
+        if (conflictingBooking) {
+            return res.status(400).json({ 
+                message: "Dates Unavailable: This accommodation is already booked and approved during your selected timeline." 
+            });
+        }
+
+        // 3. No conflict found, safe to save pending record
         const newBooking = new Booking({
             listingId,
-            guest,
+            guestId,      
             guestName,
-            startDate,
-            endDate,
+            startDate: newStart,
+            endDate: newEnd,
             status: 'pending' 
         });
 
@@ -42,11 +67,6 @@ router.post('/', async (req, res) => {
 // ==========================================
 // 3. READ: Get Bookings for a Specific Host
 // ==========================================
-// routes/bookings.js
-// Ensure mongoose is imported at the top!
-
-// routes/bookings.js
-
 router.get('/host/:hostID', async (req, res) => {
     try {
         const hostIdString = req.params.hostID;
@@ -65,8 +85,7 @@ router.get('/host/:hostID', async (req, res) => {
 
         // 3. Merge data using uniform string values
         const formattedResponse = incomingBookings.map(booking => {
-            
-            // Extract the listing reference from the booking row safely
+    
             let bookingRefString = "";
             if (booking.listingId) {
                 bookingRefString = booking.listingId.toString();
@@ -74,18 +93,16 @@ router.get('/host/:hostID', async (req, res) => {
                 bookingRefString = booking.listingID.toString();
             }
 
-            // FORCE BOTH TO STRINGS TO GUARANTEE TRUTHY MATCHING
             const matchingListing = hostListings.find(list => {
                 const listIdString = list._id ? list._id.toString() : "";
                 return listIdString === bookingRefString;
             });
 
-            
-
             return {
                 _id: booking._id.toString(),
                 status: booking.status || 'pending',
-                guestId: booking.guestId ? booking.guestId.toString() : 'Anonymous Guest',
+                guestId: booking.guestId ? booking.guestId.toString() : 'Anonymous ID',
+                guestName: booking.guestName || 'Anonymous Guest', 
                 startDate: booking.startDate,
                 endDate: booking.endDate,
                 rawListingId: bookingRefString,
@@ -104,12 +121,13 @@ router.get('/host/:hostID', async (req, res) => {
         return res.status(500).json({ error: "Data link broken: " + err.message });
     }
 });
+
 // ==========================================
 // 4. READ: Get Bookings for a Specific Guest
 // ==========================================
 router.get('/guest/:guestId', async (req, res) => {
     try {
-        const bookings = await Booking.find({ guest: req.params.guestId })
+        const bookings = await Booking.find({ guestId: req.params.guestId })
             .populate('listingId'); 
         res.json(bookings);
     } catch (err) {
@@ -134,10 +152,36 @@ router.get('/listing/:listingId', async (req, res) => {
 // ==========================================
 router.put('/:id', async (req, res) => {
     try {
+        const bookingId = req.params.id;
+        const { status } = req.body; 
+
+        // 🎯 OVERLAP PROTECTION ON APPROVAL: Check conflicts before turning 'pending' into 'approved'
+        if (status === 'approved') {
+            const currentBooking = await Booking.findById(bookingId);
+            if (!currentBooking) {
+                return res.status(404).json({ error: "Booking record not found." });
+            }
+
+            const overlapConflict = await Booking.findOne({
+                listingId: currentBooking.listingId,
+                status: 'approved',
+                _id: { $ne: bookingId }, // Do not check the booking against itself
+                startDate: { $lt: currentBooking.endDate },
+                endDate: { $gt: currentBooking.startDate }
+            });
+
+            if (overlapConflict) {
+                return res.status(400).json({ 
+                    error: "Another reservation has already been approved for these dates." 
+                });
+            }
+        }
+
+        // Perform status update and use future-proof modern syntax option
         const updatedBooking = await Booking.findByIdAndUpdate(
-            req.params.id,
-            { status: req.body.status }, // Receives either 'approved' or 'rejected'
-            { new: true }
+            bookingId,
+            { status: status }, 
+            { returnDocument: 'after' } 
         );
 
         if (!updatedBooking) {

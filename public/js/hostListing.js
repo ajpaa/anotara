@@ -59,7 +59,6 @@ function showConfirmModal(message) {
         document.getElementById("confirm-modal-message").innerText = message;
         confirmModal.classList.add("modal-active");
 
-        // Single execution handler cleanups
         const handleYes = () => {
             cleanup();
             resolve(true);
@@ -88,7 +87,6 @@ async function fetchHostListings() {
     gridContainer.innerHTML = `<p class="empty-msg">Loading your properties from Atlas...</p>`;
 
     try {
-        // FIXED: Appended the query string parameter so the backend isolates listings for this host only
         const response = await fetch(`/api/host/my-listings?hostProfileId=${CURRENT_HOST_ID}`);        
         if (!response.ok) throw new Error("Failed to fetch listings data");
         
@@ -108,6 +106,7 @@ async function fetchHostListings() {
             const escapedLoc = (listing.locationID || "Not Specified").replace(/'/g, "\\'");
             const escapedType = (listing.type || "Property").replace(/'/g, "\\'");
             const escapedDesc = (listing.description || "").replace(/'/g, "\\'").replace(/\n/g, " ");
+            const escapedContact = (listing.contact || "").replace(/'/g, "\\'"); // Escaped contact variable
 
             const currentImg = (listing.images && listing.images.length > 0) ? listing.images[0] : (listing.image || '');
             const escapedImg = currentImg.replace(/'/g, "\\'");
@@ -130,7 +129,7 @@ async function fetchHostListings() {
 
                     <div class="host-card-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
                         <button class="btn-approve" style="padding: 8px;" 
-                            onclick="setupEditForm('${listing._id}', '${escapedName}', ${listing.price || 0}, '${escapedLoc}', '${escapedImg}', '${escapedType}', '${escapedDesc}')">
+                            onclick="setupEditForm('${listing._id}', '${escapedName}', ${listing.price || 0}, '${escapedLoc}', '${escapedImg}', '${escapedType}', '${escapedDesc}', '${escapedContact}')">
                             <i class="fa-solid fa-pen-to-square"></i> Edit
                         </button>
                         <button class="btn-reject" style="padding: 8px; margin: 0;" onclick="deleteListing('${listing._id}')">
@@ -187,7 +186,7 @@ async function handleCancel() {
     }
 }
 
-function setupEditForm(id, name, price, locationID, image, type, desc) {
+function setupEditForm(id, name, price, locationID, image, type, desc, contact) {
     const formContainer = document.getElementById("listing-form-container");
     if (!formContainer) return;
 
@@ -202,6 +201,10 @@ function setupEditForm(id, name, price, locationID, image, type, desc) {
     document.getElementById("form-image").value = image; 
     document.getElementById("form-type").value = type;
     document.getElementById("form-desc").value = desc;
+    
+    // Autofills the target input on edit mode trigger
+    const contactInput = document.getElementById("form-contact");
+    if (contactInput) contactInput.value = contact || "";
 
     formContainer.scrollIntoView({ behavior: 'smooth' });
 }
@@ -226,6 +229,7 @@ async function handleFormSubmit(e) {
         type: document.getElementById("form-type").value,
         image: document.getElementById("form-image").value, 
         description: document.getElementById("form-desc").value,
+        contact: document.getElementById("form-contact").value, // Captured value sent to database
         host: CURRENT_HOST_ID 
     };
 

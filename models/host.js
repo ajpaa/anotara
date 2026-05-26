@@ -10,7 +10,7 @@ const hostSchema = new mongoose.Schema({
         unique: true 
     },
     hostName: { type: String, required: true },
-    hostContactNumber: { type: String, required: true },
+    //hostContactNumber: { type: String, required: true },
     adminID: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }, { 
     timestamps: true 

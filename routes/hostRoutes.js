@@ -33,7 +33,6 @@ router.get('/my-listings', async (req, res) => {
 // =====================================================================
 router.post('/listings/create', async (req, res) => {
     try {
-        // FIXED: Dynamically capture the creating host's ID sent from the frontend body form parameters
         const currentHostId = req.body.host;
 
         if (!currentHostId || currentHostId.trim() === "") {
@@ -46,7 +45,8 @@ router.post('/listings/create', async (req, res) => {
             type: req.body.type || "Property",
             description: req.body.description || "",
             locationID: req.body.locationID || "Not Specified",
-            host: currentHostId, // Assigned cleanly to the actual logged-in host
+            contact: req.body.contact, // FIXED: Now passing frontend contact value to Mongoose Schema
+            host: currentHostId, 
             image: req.body.image || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80'
         });
 
@@ -64,7 +64,6 @@ router.post('/listings/create', async (req, res) => {
 // =====================================================================
 router.put('/listings/edit/:id', async (req, res) => {
     try {
-        // FIXED: Capture the updating host's real ID instead of forcing a fallback placeholder value
         const currentHostId = req.body.host;
 
         if (!currentHostId) {
@@ -78,7 +77,8 @@ router.put('/listings/edit/:id', async (req, res) => {
             type: req.body.type,
             image: req.body.image, 
             description: req.body.description,
-            host: currentHostId // Preserves structural integrity of current owner index fields
+            contact: req.body.contact, // FIXED: Mapping modifications during updates
+            host: currentHostId 
         };
 
         const updatedItem = await Listing.findByIdAndUpdate(

@@ -44,10 +44,15 @@ app.use("/api/users", require("./routes/users"));
 // 5. FRONTEND ROUTING
 app.get('/guest', (req, res) => res.sendFile(path.join(__dirname, 'public', 'guest.html')));
 app.get('/host', (req, res) => res.sendFile(path.join(__dirname, 'public', 'host.html')));
+<<<<<<< HEAD
 app.get("/admin", (req, res) =>
   res.sendFile(path.join(__dirname, "public", "admin", "admin.html")),
 );
 app.get('/manageListings.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'manageListings.html')));
+=======
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
+app.get('/manageListings', (req, res) => res.sendFile(path.join(__dirname, 'public', 'manageListings.html')));
+>>>>>>> origin/main
 
 // 6. START SERVER
 const PORT = process.env.PORT || 5000;
