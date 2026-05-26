@@ -170,10 +170,10 @@ app.get(adminPages, isAuthenticated, hasRole('admin'), (req, res) => {
     
     let targetFile = path.basename(cleanPath); 
     
-    // If the request evaluates to empty or just "admin", default to "admin.html"
-    if (!targetFile || targetFile === 'admin') {
-        targetFile = 'admin.html';
-    }
+    // // If the request evaluates to empty or just "admin", default to "admin.html"
+    // if (!targetFile || targetFile === 'admin') {
+    //     targetFile = 'admin.html';
+    // }
     
     // Serves the files directly out of your public/admin/ folder structure
     res.sendFile(path.join(__dirname, 'public', 'admin', targetFile));
