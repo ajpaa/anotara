@@ -198,11 +198,11 @@ function renderPage() {
 
       const guestName = b.guestId?.username || b.guestName || "Unknown Guest";
       const listingName = hasListing ? b.listingId.name : "Unknown Listing";
-      const hostName =
-        hasListing && b.listingId.host
-          ? b.listingId.host.hostName
-          : "Unknown Host";
-      const location = hasListing ? b.listingId.locationID || "N/A" : "N/A";
+      // const hostName =
+      //   hasListing && b.listingId.host
+      //     ? b.listingId.host.hostName
+      //     : "Unknown Host";
+      // const location = hasListing ? b.listingId.locationID || "N/A" : "N/A";
 
       const statusColors = {
         approved: { bg: "#e6f4ea", color: "#2e7d32" },
@@ -226,8 +226,7 @@ function renderPage() {
       return `<tr>
           <td><a href="${guestLink}">${guestName}</a></td>
           <td><a href="${listingLink}">${listingName}</a></td>
-          <td>${location}</td>
-          <td><a href="${hostLink}">${hostName}</a></td>
+          
           <td>${checkIn}</td>
           <td>${checkOut}</td>
           <td>${dateBooked}</td>
