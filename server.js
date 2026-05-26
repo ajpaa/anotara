@@ -147,9 +147,30 @@ app.get(guestPages, isAuthenticated, hasRole('guest'), (req, res) => {
     res.sendFile(path.join(__dirname, 'public', `${targetFile}.html`));
 });
 
-// Protected Admin View Path
-app.get('/admin', isAuthenticated, hasRole('admin'), (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'admin', 'admin.html'));
+// ==========================================
+// PROTECTED ADMIN PAGES GATEWAY GROUPING (Handles both URL styles)
+// ==========================================
+const adminPages = [
+    '/admin', 
+    '/admin-listings.html', 
+    '/admin-bookings.html', 
+    '/admin-users.html',
+    '/admin/admin-listings.html', // 🎯 Added folder-style URLs
+    '/admin/admin-bookings.html',
+    '/admin/admin-users.html'
+];
+
+app.get(adminPages, isAuthenticated, hasRole('admin'), (req, res) => {
+    // path.basename extracts just the file name (e.g., "admin-users.html" from "/admin/admin-users.html")
+    let targetFile = path.basename(req.path); 
+    
+    // If the request is exactly "/admin", serve "admin.html"
+    if (targetFile === 'admin') {
+        targetFile = 'admin.html';
+    }
+    
+    // Serves the files directly out of your public/admin/ folder structure
+    res.sendFile(path.join(__dirname, 'public', 'admin', targetFile));
 });
 
 // ==========================================
