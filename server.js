@@ -150,29 +150,34 @@ app.get(guestPages, isAuthenticated, hasRole('guest'), (req, res) => {
 // ==========================================
 // PROTECTED ADMIN PAGES GATEWAY GROUPING (Handles both URL styles)
 // ==========================================
+// ==========================================
+// PROTECTED ADMIN PAGES GATEWAY GROUPING (Bulletproof)
+// ==========================================
 const adminPages = [
     '/admin', 
+    '/admin/',                  // 🎯 Handles trailing slashes
     '/admin-listings.html', 
     '/admin-bookings.html', 
     '/admin-users.html',
-    '/admin/admin-listings.html', // 🎯 Added folder-style URLs
+    '/admin/admin-listings.html', 
     '/admin/admin-bookings.html',
     '/admin/admin-users.html'
 ];
 
 app.get(adminPages, isAuthenticated, hasRole('admin'), (req, res) => {
-    // path.basename extracts just the file name (e.g., "admin-users.html" from "/admin/admin-users.html")
-    let targetFile = path.basename(req.path); 
+    // 🛠️ Remove any trailing slashes so path.basename doesn't break
+    let cleanPath = req.path.endsWith('/') ? req.path.slice(0, -1) : req.path;
     
-    // If the request is exactly "/admin", serve "admin.html"
-    if (targetFile === 'admin') {
+    let targetFile = path.basename(cleanPath); 
+    
+    // If the request evaluates to empty or just "admin", default to "admin.html"
+    if (!targetFile || targetFile === 'admin') {
         targetFile = 'admin.html';
     }
     
     // Serves the files directly out of your public/admin/ folder structure
     res.sendFile(path.join(__dirname, 'public', 'admin', targetFile));
 });
-
 // ==========================================
 // 7. PUBLIC STATIC FILE HIGHWAY (MUST BE AFTER PROTECTED ROUTES)
 // ==========================================
