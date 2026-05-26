@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User"); // Ensure this matches your model file name
+const User = require("../models/user"); // Ensure this matches your model file name
 
 router.get("/", async (req, res) => {
   try {

@@ -3,7 +3,8 @@ const dotenv = require('dotenv');
 const path = require('path');
 const mongoose = require('mongoose'); 
 const hostRoutes = require('./routes/hostRoutes');
-const authRoutes = require("./routes/auth"); // Using this variable cleanly now!
+const authRoutes = require("./routes/auth");
+const User = require('./models/user');
 
 // 1. LOAD DOTENV FIRST
 dotenv.config(); 
@@ -41,8 +42,8 @@ app.use('/api/bookings', require('./routes/bookings')); // This maps to routes/b
 app.use('/api/host', hostRoutes);
 app.use("/api/users", require("./routes/users"));
 
-// 5. FRONTEND ROUTING
-// These are now unique and correctly pointing to your files
+
+// 5. FRONTEND ROUTING (Redirects users to specific pages)
 app.get('/guest', (req, res) => res.sendFile(path.join(__dirname, 'public', 'guest.html')));
 app.get('/host', (req, res) => res.sendFile(path.join(__dirname, 'public', 'host.html')));
 
@@ -52,6 +53,20 @@ app.get('/manageListings', (req, res) => res.sendFile(path.join(__dirname, 'publ
 
 // 6. START SERVER
 const PORT = process.env.PORT || 5000;
+app.get('/test', (req, res) => {
+    res.send('<h1>The Server is definitely working!</h1>');
+});
+
+app.get('/api/guest/profile', async (req, res, next) => {
+    const guestData = await User.findOne({ role: 'guest' }).select('username');
+    res.json(guestData);
+});
+
+// Add this in server.js before app.listen()
+app.use((err, req, res, next) => {
+    console.error("💥 SERVER CRASH:", err.stack);
+    res.status(500).json({ message: err.message });
+});
 app.listen(PORT, () => {
     console.log(`🚀 Server spinning at http://localhost:${PORT}`);
 });
