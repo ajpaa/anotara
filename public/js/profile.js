@@ -51,10 +51,31 @@ updateCalendar();
 
 // DISPLAY GUEST DEETS
 async function displayProfileGuest() {
-    const res = await fetch('/api/guest/profile');
+    const userString = localStorage.getItem('user');
+    if (!userString) {
+        console.error("No user found in localStorage. Please log in.");
+        return;
+    }
+    
+    const userData = JSON.parse(userString);
+
+    // Make sure headers are included!
+    const res = await fetch('/api/guest/profile', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-User-Role': userData.role, // Or whatever your backend requires
+            // If your backend uses JWT tokens, you might need:
+            // 'Authorization': `Bearer ${userData.token}` 
+        }
+    }); 
+
+    if (!res.ok) {
+        throw new Error("Could not fetch user session status.");
+    }
+
     const data = await res.json();
-    const nameElement = document.getElementById("guest-name");
-    nameElement.textContent = data.username;
+    // ... rest of your code to update DOM
 }
 
 displayProfileGuest();

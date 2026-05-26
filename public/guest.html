@@ -11,12 +11,12 @@
 <body class="guest-body">
 
     <nav class="topbar">
-        <div class="logo">Ano Tara?</div>
+        <div class="logo" onclick="location.href='/guest'">Ano Tara?</div>
         <div class="nav-icons">
-            <a href="guest.html" title="Home"><i class="fa-solid fa-house"></i></a>
+            <a href="/guest" title="Home"><i class="fa-solid fa-house"></i></a>
             <!--<a href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>-->
-            <a href="favorites.html" title="Favorites"><i class="fa-solid fa-heart"></i></a>
-            <a href="profile.html" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
+            <a href="/favorites" title="Favorites"><i class="fa-solid fa-heart"></i></a>
+            <a href="/profile" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
         </div>
     </nav>
 
@@ -83,13 +83,6 @@
                 <option value="">Sort by Price</option>
                 <option value="price_asc">Sort by Ascending Price</option>
                 <option value="price_desc">Sort by Descending Price</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <i class="fa-solid fa-border-all"></i>
-            <select id="filter-view">
-                <option value="grid">Grid View</option>
-                <option value="list">List View</option>
             </select>
         </div>
     </section>

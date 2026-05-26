@@ -162,18 +162,29 @@ body {
 }
 
 .filter-group {
-  background: #f4f4f4;
-  padding: 12px 20px;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.filter-group select {
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+    padding-left: 10px;
+    font-size: 14px;
+    color: #333;
 }
 
 .filter-group i {
   color: var(--text-gray);
 }
-.filter-group select,
+
 .filter-group input {
   border: none;
   background: transparent;
@@ -182,6 +193,7 @@ body {
   font-size: 0.9rem;
   cursor: pointer;
 }
+
 
 /* --- 5. LISTINGS GRID (Main & Favorites) --- */
 .content-area {

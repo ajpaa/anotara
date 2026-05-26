@@ -1,6 +1,14 @@
 // ==========================================
 // 1. APPLICATION CONTROLLER
-// ==========================================
+// ==========================================\
+// 1. Immediately check if the user is logged in
+const sessionUser = JSON.parse(localStorage.getItem("user"));
+
+if (!sessionUser) {
+    // If no user is found in localStorage, kick them back to the login page immediately
+    alert("Access Denied: Please log in first.");
+    window.location.href = "/index.html"; // Change this to your actual login page filename
+}
 document.addEventListener("DOMContentLoaded", () => {
     // matic load of listings
     renderDashboardGrid();
@@ -97,7 +105,7 @@ async function renderDashboardGrid() {
             const displayLoc   = listing.locationID || "Not Specified";
             const displayPrice = listing.price ? Number(listing.price).toLocaleString() : "0";
             const shortDesc    = listing.description ? listing.description.split('.')[0] + '...' : "No description available.";
-            const detailUrl    = `listing-details.html?id=${listing._id}`;
+            const detailUrl    = `/listing-details?id=${listing._id}`;
 
             // Image Lookup Fallback Chain
             let displayImg = 'https://placehold.co/600x400?text=No+Image';

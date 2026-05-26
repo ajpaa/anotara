@@ -26,11 +26,10 @@ function buildNavbar() {
         document.getElementById("admin-banner").classList.add("visible");
         document.getElementById("admin-delete-top-btn").addEventListener("click", openDeleteModal);
     } else {
-        logo.onclick = () => (window.location.href = "guest.html");
+        logo.onclick = () => (window.location.href = "/guest");
         navIcons.innerHTML = `
-            <a href="guest.html"><i class="fa-solid fa-house"></i></a>
-            <a href="guest.html"><i class="fa-solid fa-magnifying-glass"></i></a>
-            <a href="favorites.html"><i class="fa-solid fa-heart"></i></a>
+            <a href="/guest"><i class="fa-solid fa-house"></i></a>
+            <a href="/favorites"><i class="fa-solid fa-heart"></i></a>
         `;
     }
 }
