@@ -4,7 +4,6 @@
 const loggedInUserSession = localStorage.getItem('user');
 let parsedSessionData = loggedInUserSession ? JSON.parse(loggedInUserSession) : null;
 
-// Fallback staging parameters if no session is active during development
 if (!parsedSessionData || parsedSessionData.role !== 'host') {
     console.warn("⚠️ No host session detected. Provisioning dev profile staging parameters matching Atlas mock entries.");
     parsedSessionData = {
@@ -18,53 +17,47 @@ if (!parsedSessionData || parsedSessionData.role !== 'host') {
 
 const CURRENT_HOST_ID = parsedSessionData.hostProfileId;
 
-// Expose transactional functions explicitly to global window context for HTML onclick attributes
 window.updateBookingStatus = updateBookingStatus;
 window.closeStatusModal = closeStatusModal;
 window.closeConfirmModal = closeConfirmModal;
 
-// Initialize component execution on DOM load
 document.addEventListener("DOMContentLoaded", () => {
     fetchIncomingRequests();
 });
 
 // ==========================================
-// 2. FETCH INCOMING BOOKINGS (WITH ATLAS LINKING)
+// 2. FETCH INCOMING BOOKINGS (WITH DATES INSTALLED)
 // ==========================================
 async function fetchIncomingRequests() {
     const container = document.getElementById("bookings-container");
     if (!container) return;
     
-    // Injecting dynamic loading message into grid container
-    container.innerHTML = `<p class="empty-msg" style="grid-column: 1/-1; text-align: center; color: #666;">Fetching pending guest reservations from database network...</p>`;
+    container.innerHTML = `<p class="empty-msg" style="grid-column: 1/-1; text-align: center; color: #666;">Loading pending reservations...</p>`;
 
     try {
         const response = await fetch(`/api/bookings/host/${CURRENT_HOST_ID}`);
-        if (!response.ok) throw new Error("Failed to pull from structural booking routes.");
+        if (!response.ok) throw new Error("Failed to load booking information.");
 
         const bookings = await response.json();
         console.log("INCOMING BOOKING DATA IN BROWSER:", bookings);
         
-        container.innerHTML = ""; // Wipe container clean for dataset paint loop
+        container.innerHTML = ""; 
 
         if (bookings.length === 0) {
-            container.innerHTML = `<p class="empty-msg" style="grid-column: 1/-1; text-align: center; color: #888; font-weight: 600; padding: 40px 0;">No active booking requests pending evaluation right now.</p>`;
+            container.innerHTML = `<p class="empty-msg" style="grid-column: 1/-1; text-align: center; color: #888; font-weight: 600; padding: 40px 0;">No pending booking requests at the moment.</p>`;
             return;
         }
 
         bookings.forEach(booking => {
             const card = document.createElement("div");
-            card.className = "listing-card"; // Adheres perfectly to your template styling configuration rules
+            card.className = "listing-card"; 
             
-            // UI Status Flag colors matching your style specifications
             const isApproved = booking.status === 'approved';
             const isRejected = booking.status === 'rejected';
             const statusColor = isApproved ? '#008486' : isRejected ? '#ff5a5f' : '#d48d3b';
 
-            // 1. Read the separate listingDetails sent from our fixed backend
             const details = booking.listingDetails;
             
-            // 2. Set variable extraction with absolute fallbacks
             let listingName = "Unknown Accommodation Title";
             let displayPrice = "0";
             let listingImg = 'https://placehold.co/600x400?text=Listing+Preview';
@@ -77,7 +70,12 @@ async function fetchIncomingRequests() {
                 listingName = `Listing ID Ref: ${booking.rawListingId}`;
             }
 
-            const guestIdentifier = booking.guestId || 'Anonymous Guest';
+            const guestIdentifier = booking.guestName || 'Anonymous Guest';
+
+            // 🎯 DATE FORMATTING: Convert UTC timestamps to localized date strings
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            const formattedStart = booking.startDate ? new Date(booking.startDate).toLocaleDateString(undefined, options) : 'N/A';
+            const formattedEnd = booking.endDate ? new Date(booking.endDate).toLocaleDateString(undefined, options) : 'N/A';
 
             card.innerHTML = `
                 <img src="${listingImg}" alt="${listingName}" style="width: 100%; height: 200px; object-fit: cover;">
@@ -92,6 +90,11 @@ async function fetchIncomingRequests() {
                     <p style="margin: 0; font-size: 0.9rem; color: #555;">
                         <i class="fa-solid fa-user-circle" style="color: #666; margin-right: 5px;"></i> 
                         <strong>Guest:</strong> ${guestIdentifier}
+                    </p>
+
+                    <p style="margin: 0; font-size: 0.9rem; color: #555;">
+                        <i class="fa-solid fa-calendar-days" style="color: #666; margin-right: 5px;"></i> 
+                        <strong>Timeline:</strong> ${formattedStart} — ${formattedEnd}
                     </p>
                     
                     <p style="margin: 0; font-size: 0.9rem; color: #555;">
@@ -119,7 +122,7 @@ async function fetchIncomingRequests() {
         });
     } catch (err) {
         console.error("Critical Host Booking Read Failure:", err);
-        container.innerHTML = `<p class="empty-msg" style="grid-column: 1/-1; text-align: center; color: #ff5a5f; font-weight: 600;">Could not synchronize with cloud clusters. Check network configuration routing panels.</p>`;
+        container.innerHTML = `<p class="empty-msg" style="grid-column: 1/-1; text-align: center; color: #ff5a5f; font-weight: 600;">Unable to load bookings. Please check your connection and try again.</p>`;
     }
 }
 
@@ -127,9 +130,9 @@ async function fetchIncomingRequests() {
 // 3. UPDATE ACTION TRANSACTION HANDLING (PUT)
 // ==========================================
 async function updateBookingStatus(bookingId, decision) {
-    const messagePrompt = `Are you absolutely certain you want to flag this active guest transaction request as ${decision.toUpperCase()}?`;
+    const actionText = decision === 'approved' ? 'approve' : 'reject';
+    const messagePrompt = `Are you sure you want to ${actionText} this booking request?`;
     
-    // Call our non-blocking structural confirm popup layer
     const decisionConfirmed = await showConfirmModal(messagePrompt);
     if (!decisionConfirmed) return;
 
@@ -142,14 +145,14 @@ async function updateBookingStatus(bookingId, decision) {
 
         if (!response.ok) {
             const errorPayload = await response.json();
-            throw new Error(errorPayload.error || "Server validation rejection transaction exception.");
+            throw new Error(errorPayload.error || "The server could not process this update.");
         }
 
-        showStatusModal("Update Completed", `The property accommodation booking request has been systematically marked as ${decision.toUpperCase()}!`);
-        fetchIncomingRequests(); // Reload cards dynamically
+        showStatusModal("Success", `The booking request has been successfully ${decision}!`);
+        fetchIncomingRequests(); 
     } catch (err) {
         console.error("Booking transactional update failed:", err);
-        showStatusModal("Update Error", err.message);
+        showStatusModal("Error", err.message);
     }
 }
 

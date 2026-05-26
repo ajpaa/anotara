@@ -1,45 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ano Tara? | Host Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body class="guest-body">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ano Tara? | Host Dashboard</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body class="guest-body">
 
-    <nav class="topbar">
-        <div class="logo">Ano Tara?</div>
-        <div class="nav-icons">
-            <a href="guest.html" title="Home"><i class="fa-solid fa-house"></i></a>
-            <a href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
-            <a href="favorites.html" title="Favorites"><i class="fa-solid fa-heart"></i></a>
-            <a href="profile.html" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
-        </div>
-    </nav>
-
-    <header class="hero">
-        <div class="hero-content">
-            <h1>Incoming Booking Requests</h1>
-            <p>Review, approve, or reject reservation intents for your properties</p>
-        </div>        
-    </header>
-
-    <main class="content-area">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <h2 class="section-title" style="margin-bottom: 0;">Pending Guest Bookings</h2>
-            <a href="manageListings.html" class="view-more-teal" style="text-decoration: none;">Manage My Listings ➔</a>
-        </div>
-        
-        <div id="bookings-container" class="listings-grid-v2">
+        <nav class="topbar">
+            <div class="logo">Ano Tara?</div>
+            <div class="nav-icons">
+                <a href="guest.html" title="Home"><i class="fa-solid fa-house"></i></a>
+                <a href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
+                <a href="favorites.html" title="Favorites"><i class="fa-solid fa-heart"></i></a>
+                <a href="profile.html" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
             </div>
-    </main>
+        </nav>
 
-    <script src="js/host.js"></script>
+        <header class="hero">
+            <div class="hero-content">
+                <h1>Incoming Booking Requests</h1>
+                <p>Review, approve, or reject reservation intents for your properties</p>
+            </div>        
+        </header>
 
+        <main class="content-area">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 class="section-title" style="margin-bottom: 0;">Pending Guest Bookings</h2>
+                <a href="manageListings.html" class="view-more-teal" style="text-decoration: none;">Manage My Listings ➔</a>
+            </div>
+            
+            <div id="bookings-container" class="listings-grid-v2">
+                </div>
+        </main>
 
-</body>
+        <script src="js/host.js"></script>
+
+        <div id="status-modal" class="modal-overlay">
+            <div class="modal-box">
+                <h3 id="status-modal-title">Notification</h3>
+                <p id="status-modal-message">Message text goes here.</p>
+                <div class="modal-actions">
+                    <button class="modal-btn confirm-btn" onclick="closeStatusModal()">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="confirm-modal" class="modal-overlay">
+            <div class="modal-box">
+                <h3>Confirm Action</h3>
+                <p id="confirm-modal-message">Are you sure you want to proceed?</p>
+                <div class="modal-actions">
+                    <button id="confirm-modal-yes" class="modal-btn danger-btn">Confirm</button>
+                    <button class="modal-btn cancel-btn" onclick="closeConfirmModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+    </body>
 </html>
 

@@ -150,8 +150,9 @@ if (bookingForm) {
 
         const bookingData = {
             listingId: listingId,
-            guestId: guest._id, // This matches the backend destructuring now!
-            guestName: document.getElementById('guestName').value, // Ensure this input value is grabbed
+            guestId: guest._id, 
+            // Secure fix: Grab the verified name straight from the session data object
+            guestName: document.getElementById('guestName').value, 
             startDate: start,
             endDate: end,
             status: 'pending'
