@@ -3,55 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ano Tara? | Guest Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Listing Details | Ano Tara?</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="guest-body">
+<body class="details-page">
 
-    <nav class="topbar">
-        <div class="logo">Ano Tara?</div>
-        <div class="nav-icons">
-            <a href="guest.html" title="Home"><i class="fa-solid fa-house"></i></a>
-            <a href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
-            <a href="favorites.html" title="Favorites"><i class="fa-solid fa-heart"></i></a>
-            <a href="profile.html" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
+<nav class="topbar">
+    <div class="logo" onclick="window.location.href='guest.html'">Ano Tara?</div>
+    <div class="nav-icons">
+        <a href="guest.html"><i class="fa-solid fa-house"></i></a>
+        <a href="guest.html"><i class="fa-solid fa-magnifying-glass"></i></a>
+        <a href="favorites.html"><i class="fa-solid fa-heart"></i></a>
+        <a href="profile.html"><i class="fa-solid fa-circle-user"></i></a>
+    </div>
+</nav>
+
+<main class="details-container">
+    <header class="details-header">
+        <h1 id="det-title">Loading property...</h1>
+        <div class="header-meta">
+            <span id="det-loc"><i class="fa-solid fa-location-dot"></i> Loading location...</span>
+            <span class="rating" style="color: #f39c12;"><i class="fa-solid fa-star"></i> 4.9 (New)</span>
         </div>
-    </nav>
-
-    <header class="hero" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://i.pinimg.com/1200x/a8/2a/ca/a82acacb6ea75cf2a63e62f50657564e.jpg'); background-size: cover; background-position: center;">
-        <div class="hero-content">
-            <h1>Property Inventory Control</h1>
-            <p>Create, update details, or clear listings off the active cluster registry</p>
-        </div>        
     </header>
 
-    <main class="content-area">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-            <h2 class="section-title" style="margin-bottom: 0;">Active Accommodations</h2>
-            <button class="view-more-teal" onclick="toggleForm()">+ Create New Listing</button>
-        </div>
+    <div class="details-tabs" style="display: flex; gap: 30px; margin: 20px 0; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+        <span class="tab active" style="color: var(--primary-teal); border-bottom: 2px solid var(--primary-teal); padding-bottom: 8px; cursor: pointer;">Description</span>
+        <span class="tab" style="color: #666; cursor: pointer;">Features</span>
+        <span class="tab" style="color: #666; cursor: pointer;">Virtual Tour</span>
+    </div>
 
-        <div id="listing-form-container" style="display: none; background: #fafafa; padding: 30px; border-radius: 20px; margin-bottom: 35px; border: 1px solid #eee;">
-            <h3 id="form-title" style="margin-bottom: 15px; font-weight: 800; color: var(--teal-main);">Add an Accommodation</h3>
-            <form id="listing-form" onsubmit="handleFormSubmit(event)">
-                <input type="hidden" id="form-listing-id">
-                <div class="input-group-v2"><input type="text" id="form-name" placeholder="Property Title (e.g., Beachfront Condo)" required></div>
-                <div class="input-group-v2"><input type="number" id="form-price" placeholder="Price per night (₱)" required></div>
-                <div class="input-group-v2"><input type="text" id="form-location" placeholder="Location City (e.g., Caloocan)" required></div>
-                <div class="input-group-v2"><input type="text" id="form-type" placeholder="Property Type (e.g., Villa, Apartment)" required></div>
-                <div class="input-group-v2"><input type="text" id="form-desc" placeholder="Write an enticing summary description..."></div>
-                <button type="submit" class="teal-submit-btn">Save Real Estate Data Entry</button>
-            </form>
-        </div>
-
-        <div id="listings-grid" class="listings-grid">
+    <div class="details-grid" style="display: grid; grid-template-columns: 1fr 350px; gap: 40px;">
+        <section class="content-main">
+            <div class="image-gallery">
+                <img id="det-img" src="https://placehold.co/800x500?text=Loading+Image" alt="Property" style="width: 100%; border-radius: 15px;">
             </div>
-    </main>
 
-    <script src="js/host.js"></script>
+            <div class="description-section" style="margin-top: 30px;">
+                <h2>About this <span id="det-type" style="color: var(--primary-teal);">stay</span></h2>
+                <p id="det-desc" style="line-height: 1.6; color: #444;">Fetching latest information from host...</p>
+            </div>
 
+            <div class="amenities-section" style="margin-top: 30px;">
+                <h3>What this place offers</h3>
+                <div class="amenity-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                    <span><i class="fa-solid fa-wifi" style="color: var(--primary-teal);"></i> Fast WiFi</span>
+                    <span><i class="fa-solid fa-bed" style="color: var(--primary-teal);"></i> King Bed</span>
+                    <span><i class="fa-solid fa-bath" style="color: var(--primary-teal);"></i> Bathtub</span>
+                    <span><i class="fa-solid fa-utensils" style="color: var(--primary-teal);"></i> Breakfast</span>
+                </div>
+            </div>
+        </section>
+
+        <aside class="booking-sidebar">
+            <div class="booking-card" style="border: 1px solid #e0e0e0; padding: 24px; border-radius: 15px; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 100px;">
+                <div class="price-header" style="margin-bottom: 15px;">
+                    <span id="det-price" style="font-size: 1.5rem; font-weight: 800;">₱0</span> 
+                    <small>/ night</small>
+                </div>
+                
+                <form id="detailsBookingForm">
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Check-in / Check-out</label>
+                        <div class="date-inputs" style="display: flex; gap: 10px; margin-top: 5px;">
+                            <input type="date" id="startDate" required style="width: 100%; padding: 8px;">
+                            <input type="date" id="endDate" required style="width: 100%; padding: 8px;">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Guest Name</label>
+                        <input type="text" id="guestName" placeholder="Full name for booking" required style="width: 100%; padding: 10px; box-sizing: border-box;">
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button type="submit" class="btn-reserve" style="flex: 1; background: var(--primary-teal); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer;">Confirm Booking</button>
+                        <button type="button" class="btn-cancel" onclick="resetForm()" style="flex: 1; padding: 15px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">Cancel</button>
+                    </div>
+                    
+                    <div class="total-row" style="display: flex; justify-content: space-between; margin-top: 20px; font-weight: 700; border-top: 1px solid #eee; padding-top: 15px;">
+                        <span>Total stay cost</span>
+                        <strong id="total-price">₱0</strong>
+                    </div>
+                </form>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<script src="js/details.js"></script>
 </body>
 </html>
-

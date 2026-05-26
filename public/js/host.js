@@ -1,221 +1,204 @@
 // ==========================================
-// 1. BYPASS LOGIC & SESSION INITIALIZATION
+// 1. AUTH LOGIC & DASHBOARD PROTECTION
 // ==========================================
-let CURRENT_HOST_ID = null;
-
 const loggedInUserSession = localStorage.getItem('user');
 let parsedSessionData = loggedInUserSession ? JSON.parse(loggedInUserSession) : null;
 
-// DEVELOPMENT BYPASS CHECK: If no profile exists, inject a mock fallback identity instantly
+// Fallback staging parameters if no session is active during development
 if (!parsedSessionData || parsedSessionData.role !== 'host') {
-    console.warn("⚠️ No active host session found. Injecting a temporary Mock Profile for seamless feature testing.");
-    
-    const mockUserSession = {
+    console.warn("⚠️ No host session detected. Provisioning dev profile staging parameters matching Atlas mock entries.");
+    parsedSessionData = {
         _id: "65f1a2b3c4d5e6f7a8b9c001",
         username: "DevHostTester",
         role: "host",
-        hostProfileId: "65f1a2b3c4d5e6f7a8b9c002" // Target fallback Host identifier
+        hostProfileId: "65f1a2b3c4d5e6f7a8b9c002" 
     };
-    
-    localStorage.setItem('user', JSON.stringify(mockUserSession));
-    parsedSessionData = mockUserSession;
+    localStorage.setItem('user', JSON.stringify(parsedSessionData));
 }
 
-// Lock down our host identification variable
-CURRENT_HOST_ID = parsedSessionData.hostProfileId;
+const CURRENT_HOST_ID = parsedSessionData.hostProfileId;
 
-// Initialize features on document ready
+// Expose transactional functions explicitly to global window context for HTML onclick attributes
+window.updateBookingStatus = updateBookingStatus;
+window.closeStatusModal = closeStatusModal;
+window.closeConfirmModal = closeConfirmModal;
+
+// Initialize component execution on DOM load
 document.addEventListener("DOMContentLoaded", () => {
-    // Fetch and draw properties
-    fetchHostListings();
-
-    // Bind event handler explicitly to the form wrapper
-    const formElement = document.getElementById("listing-form");
-    if (formElement) {
-        formElement.addEventListener("submit", handleFormSubmit);
-    }
+    fetchIncomingRequests();
 });
 
 // ==========================================
-// 2. FETCH OWN LISTINGS FUNCTIONALITY
+// 2. FETCH INCOMING BOOKINGS (WITH ATLAS LINKING)
 // ==========================================
-async function fetchHostListings() {
-    const gridContainer = document.getElementById("listings-grid");
-    if (!gridContainer) return;
+async function fetchIncomingRequests() {
+    const container = document.getElementById("bookings-container");
+    if (!container) return;
     
-    gridContainer.innerHTML = `<p class="empty-msg">Loading your properties from Atlas...</p>`;
+    // Injecting dynamic loading message into grid container
+    container.innerHTML = `<p class="empty-msg" style="grid-column: 1/-1; text-align: center; color: #666;">Fetching pending guest reservations from database network...</p>`;
 
     try {
-        // Pointing to your server host controller mount point
-        const response = await fetch(`/api/host/listings/my-listings`);
-        if (!response.ok) throw new Error("Failed to fetch listings data");
-        
-        const listings = await response.json();
-        gridContainer.innerHTML = ""; 
+        const response = await fetch(`/api/bookings/host/${CURRENT_HOST_ID}`);
+        if (!response.ok) throw new Error("Failed to pull from structural booking routes.");
 
-        if (listings.length === 0) {
-            gridContainer.innerHTML = `<p class="empty-msg">You haven't posted any accommodations yet.</p>`;
+        const bookings = await response.json();
+        console.log("INCOMING BOOKING DATA IN BROWSER:", bookings);
+        
+        container.innerHTML = ""; // Wipe container clean for dataset paint loop
+
+        if (bookings.length === 0) {
+            container.innerHTML = `<p class="empty-msg" style="grid-column: 1/-1; text-align: center; color: #888; font-weight: 600; padding: 40px 0;">No active booking requests pending evaluation right now.</p>`;
             return;
         }
 
-listings.forEach(listing => {
-    const card = document.createElement("div");
-    card.className = "listing-card"; 
-    
-    // --- INSERT THE ESCAPING LOGIC HERE ---
-    const escapedName = (listing.name || "Untitled").replace(/'/g, "\\'");
-    const escapedLoc = (listing.locationID || "Not Specified").replace(/'/g, "\\'");
-    const escapedType = (listing.type || "Property").replace(/'/g, "\\'");
-    // Also remove newlines from description so they don't break the HTML attribute
-    const escapedDesc = (listing.description || "").replace(/'/g, "\\'").replace(/\n/g, " ");
-
-    const displayPrice = Number(listing.price || 0).toLocaleString();
-    const displayImg = (listing.images && listing.images.length > 0) 
-        ? listing.images[0] 
-        : (listing.image || 'https://placehold.co/600x400?text=Property+Preview');
-
-    // --- UPDATE THE CARD INNERHTML HERE ---
-    card.innerHTML = `
-        <img src="${displayImg}" alt="${listing.name}">
-        <div class="card-info">
-            <h3>${listing.name}</h3>
-            <p class="loc"><i class="fa-solid fa-location-dot"></i> ${listing.locationID} • ${listing.type || 'Property'}</p>
-            <p class="loc" style="margin-top: 5px; font-size: 0.8rem; height: 35px; overflow: hidden;">${listing.description || 'No description provided.'}</p>
+        bookings.forEach(booking => {
+            const card = document.createElement("div");
+            card.className = "listing-card"; // Adheres perfectly to your template styling configuration rules
             
-            <div class="price-row" style="margin-top: 15px; border-top: 1px solid #f0f0f0; padding-top: 10px;">
-                <div class="price">
-                    <strong>₱${displayPrice}</strong> / night
+            // UI Status Flag colors matching your style specifications
+            const isApproved = booking.status === 'approved';
+            const isRejected = booking.status === 'rejected';
+            const statusColor = isApproved ? '#008486' : isRejected ? '#ff5a5f' : '#d48d3b';
+
+            // 1. Read the separate listingDetails sent from our fixed backend
+            const details = booking.listingDetails;
+            
+            // 2. Set variable extraction with absolute fallbacks
+            let listingName = "Unknown Accommodation Title";
+            let displayPrice = "0";
+            let listingImg = 'https://placehold.co/600x400?text=Listing+Preview';
+
+            if (details) {
+                listingName = details.name || listingName;
+                displayPrice = details.price ? Number(details.price).toLocaleString() : "0";
+                if (details.image) listingImg = details.image;
+            } else if (booking.rawListingId) {
+                listingName = `Listing ID Ref: ${booking.rawListingId}`;
+            }
+
+            const guestIdentifier = booking.guestId || 'Anonymous Guest';
+
+            card.innerHTML = `
+                <img src="${listingImg}" alt="${listingName}" style="width: 100%; height: 200px; object-fit: cover;">
+                <div class="card-info" style="padding: 20px; display: flex; flex-direction: column; gap: 8px;">
+                    <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #222;">${listingName}</h3>
+                    
+                    <p style="margin: 0; font-size: 0.9rem; color: #555;">
+                        <i class="fa-solid fa-money-bill" style="color: #666; margin-right: 5px;"></i> 
+                        <strong>Price Rate:</strong> ₱${displayPrice} / night
+                    </p>
+
+                    <p style="margin: 0; font-size: 0.9rem; color: #555;">
+                        <i class="fa-solid fa-user-circle" style="color: #666; margin-right: 5px;"></i> 
+                        <strong>Guest:</strong> ${guestIdentifier}
+                    </p>
+                    
+                    <p style="margin: 0; font-size: 0.9rem; color: #555;">
+                        <i class="fa-solid fa-clock-rotate-left" style="color: #666; margin-right: 5px;"></i> 
+                        <strong>Status:</strong> <span style="font-weight: 700; color: ${statusColor}; text-transform: uppercase;">${booking.status}</span>
+                    </p>
+                    
+                    ${booking.status === 'pending' ? `
+                        <div class="booking-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                            <button class="btn-approve" onclick="updateBookingStatus('${booking._id}', 'approved')" style="padding: 10px; background: #008486; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                                <i class="fa-solid fa-circle-check"></i> Approve
+                            </button>
+                            <button class="btn-reject" onclick="updateBookingStatus('${booking._id}', 'rejected')" style="padding: 10px; background: #ff5a5f; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                                <i class="fa-solid fa-circle-xmark"></i> Reject
+                            </button>
+                        </div>
+                    ` : `
+                        <div style="margin-top: 12px; padding: 8px; background: #f5f5f5; border-radius: 6px; text-align: center; font-size: 0.85rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Reservation Processed
+                        </div>
+                    `}
                 </div>
-            </div>
-
-            <div class="host-card-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
-                <button class="btn-approve" style="padding: 8px;" 
-                    onclick="setupEditForm('${listing._id}', '${escapedName}', ${listing.price || 0}, '${escapedLoc}', '${escapedType}', '${escapedDesc}')">
-                    <i class="fa-solid fa-pen-to-square"></i> Edit
-                </button>
-                <button class="btn-reject" style="padding: 8px; margin: 0;" onclick="deleteListing('${listing._id}')">
-                    <i class="fa-solid fa-trash-can"></i> Delete
-                </button>
-            </div>
-        </div>
-    `;
-    gridContainer.appendChild(card);
-});
-
+            `;
+            container.appendChild(card);
+        });
     } catch (err) {
-        console.error("Error loading listings:", err);
-        gridContainer.innerHTML = `<p class="empty-msg" style="color: #ff5a5f;">Error displaying listings from server cluster.</p>`;
+        console.error("Critical Host Booking Read Failure:", err);
+        container.innerHTML = `<p class="empty-msg" style="grid-column: 1/-1; text-align: center; color: #ff5a5f; font-weight: 600;">Could not synchronize with cloud clusters. Check network configuration routing panels.</p>`;
     }
 }
 
 // ==========================================
-// 3. UI ELEMENT CONTROLS (TOGGLE & SETUP FORM)
+// 3. UPDATE ACTION TRANSACTION HANDLING (PUT)
 // ==========================================
-function toggleForm() {
-    const formContainer = document.getElementById("listing-form-container");
-    if (!formContainer) return;
+async function updateBookingStatus(bookingId, decision) {
+    const messagePrompt = `Are you absolutely certain you want to flag this active guest transaction request as ${decision.toUpperCase()}?`;
     
-    const isHidden = formContainer.style.display === "none" || formContainer.style.display === "";
-    formContainer.style.display = isHidden ? "block" : "none";
-    
-    if (isHidden) {
-        // Reset to "Add Mode"
-        document.getElementById("listing-form").reset();
-        document.getElementById("form-listing-id").value = "";
-        document.getElementById("form-title").innerText = "Add an Accommodation";
-        document.querySelector(".teal-submit-btn").innerText = "Save Real Estate Data Entry";
-    }
-}
-
-function setupEditForm(id, name, price, locationID, type, desc) {
-    const formContainer = document.getElementById("listing-form-container");
-    if (!formContainer) return;
-
-    window.setupEditForm = setupEditForm;
-    window.deleteListing = deleteListing;
-    window.toggleForm = toggleForm;
-
-    formContainer.style.display = "block"; 
-    document.getElementById("form-title").innerText = "Modify Accommodation Specifics";
-    document.querySelector(".teal-submit-btn").innerText = "Update active registry entry";
-    
-    document.getElementById("form-listing-id").value = id;
-    document.getElementById("form-name").value = name; 
-    document.getElementById("form-price").value = Number(price); 
-    document.getElementById("form-location").value = locationID; 
-    document.getElementById("form-type").value = type;
-    document.getElementById("form-desc").value = desc;
-
-    formContainer.scrollIntoView({ behavior: 'smooth' });
-}
-
-// ==========================================
-// 4. CREATE / EDIT SUBMISSION HANDLING
-// ==========================================
-async function handleFormSubmit(e) {
-    e.preventDefault();
-    
-    const mongoId = document.getElementById("form-listing-id").value;
-    const isEditing = mongoId !== "";
-
-    // CLEANUP: Read string, strip everything except numbers/decimals
-    const rawPriceValue = document.getElementById("form-price").value;
-    const cleanPriceNumber = Number(String(rawPriceValue).replace(/[^0-9.]/g, ""));
-    const finalPrice = isNaN(cleanPriceNumber) ? 0 : cleanPriceNumber;
-
-    const payload = {
-        name: document.getElementById("form-name").value,
-        price: finalPrice, 
-        locationID: document.getElementById("form-location").value,
-        type: document.getElementById("form-type").value,
-        description: document.getElementById("form-desc").value,
-        hostId: CURRENT_HOST_ID 
-    };
-
-    console.log(`✈️ ${isEditing ? 'Updating' : 'Creating'} payload:`, payload);
-
-    const url = isEditing ? `/api/host/listings/edit/${mongoId}` : `/api/host/listings/create`;
-    const method = isEditing ? "PUT" : "POST";
+    // Call our non-blocking structural confirm popup layer
+    const decisionConfirmed = await showConfirmModal(messagePrompt);
+    if (!decisionConfirmed) return;
 
     try {
-        const response = await fetch(url, {
-            method: method,
+        const response = await fetch(`/api/bookings/${bookingId}`, {
+            method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ status: decision })
         });
 
         if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.error || "Network error transaction processing.");
+            const errorPayload = await response.json();
+            throw new Error(errorPayload.error || "Server validation rejection transaction exception.");
         }
 
-        alert(isEditing ? "Accommodation updated successfully!" : "New property listed successfully!");
-        toggleForm(); // Close and reset form          
-        fetchHostListings(); // Refresh grid   
+        showStatusModal("Update Completed", `The property accommodation booking request has been systematically marked as ${decision.toUpperCase()}!`);
+        fetchIncomingRequests(); // Reload cards dynamically
     } catch (err) {
-        console.error("Submission failed:", err);
-        alert(`Error: ${err.message}`);
+        console.error("Booking transactional update failed:", err);
+        showStatusModal("Update Error", err.message);
     }
 }
 
 // ==========================================
-// 5. DELETE LISTING FUNCTIONALITY
+// 4. SYSTEM POPUP MODAL CONTROL LOGIC
 // ==========================================
-async function deleteListing(mongoId) {
-    const confirmDelete = confirm("Are you sure you want to delete this listing permanently?");
-    if (!confirmDelete) return;
-
-    try {
-        const response = await fetch(`/api/host/listings/delete/${mongoId}`, { method: "DELETE" });
-        if (response.ok) {
-            alert("Listing successfully removed!");
-            fetchHostListings(); 
-        } else {
-            const data = await response.json();
-            alert(`Error: ${data.message}`);
-        }
-    } catch (err) {
-        console.error("Delete failed:", err);
-        alert("Failed to reach server.");
+function showStatusModal(title, message) {
+    const modal = document.getElementById("status-modal");
+    if (!modal) {
+        alert(`${title}: ${message}`);
+        return;
     }
+    document.getElementById("status-modal-title").innerText = title;
+    document.getElementById("status-modal-message").innerText = message;
+    modal.classList.add("modal-active");
+}
+
+function closeStatusModal() {
+    const modal = document.getElementById("status-modal");
+    if (modal) modal.classList.remove("modal-active");
+}
+
+function showConfirmModal(message) {
+    return new Promise((resolve) => {
+        const confirmModal = document.getElementById("confirm-modal");
+        const yesBtn = document.getElementById("confirm-modal-yes");
+        
+        if (!confirmModal || !yesBtn) {
+            return resolve(confirm(message));
+        }
+
+        document.getElementById("confirm-modal-message").innerText = message;
+        confirmModal.classList.add("modal-active");
+
+        const handleYes = () => {
+            cleanup();
+            resolve(true);
+        };
+
+        const cleanup = () => {
+            yesBtn.removeEventListener("click", handleYes);
+            closeConfirmModal();
+        };
+
+        yesBtn.addEventListener("click", handleYes);
+    });
+}
+
+function closeConfirmModal() {
+    const confirmModal = document.getElementById("confirm-modal");
+    if (confirmModal) confirmModal.classList.remove("modal-active");
 }

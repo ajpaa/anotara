@@ -7,10 +7,8 @@ const authRoutes = require("./routes/auth");
 const User = require('./models/user');
 
 // 1. LOAD DOTENV FIRST
-// This ensures process.env.MONGO_URI is available to the rest of the app
 dotenv.config(); 
 
-// Debugging line (You can remove this once it works)
 console.log("Checking MONGO_URI:", process.env.MONGO_URI ? "Found! ✅" : "Not Found! ❌");
 
 const connectDB = require('./config/db');
@@ -19,15 +17,30 @@ const app = express();
 // 2. CONNECT TO DATABASE
 connectDB();
 
+// =========================================================
+// NEW: FORCE MONGOOSE TO ALIGN SCHEMA AND INDEX LAYOUTS
+// =========================================================
+const Host = require('./models/host');
+mongoose.connection.once('open', async () => {
+    try {
+        // This drops broken ghost indexes in Atlas making fields vanish
+        await Host.syncIndexes();
+        console.log("🎯 MongoDB Host Collection Indexes Synchronized Perfectly!");
+    } catch (err) {
+        console.error("⚠️ Index Sync Warning:", err.message);
+    }
+});
+
 // 3. MIDDLEWARE
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 4. API ROUTES
-app.use('/api/auth', require('./routes/auth'));
+// 4. API ROUTES (Ensure there is only one declaration per route!)
+app.use('/api/auth', authRoutes); 
 app.use('/api/listings', require('./routes/listings'));
-app.use('/api/bookings', require('./routes/bookings'));
-app.use('/api/host', require('./routes/hostRoutes'));
+app.use('/api/bookings', require('./routes/bookings')); // This maps to routes/bookings.js
+app.use('/api/host', hostRoutes);
+app.use("/api/users", require("./routes/users"));
 
 
 // 5. FRONTEND ROUTING (Redirects users to specific pages)
@@ -55,5 +68,3 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log(`🚀 Server spinning at http://localhost:${PORT}`);
 });
-
-

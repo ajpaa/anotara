@@ -1,26 +1,14 @@
-const mongoose = require('mongoose');
+const express = require("express");
+const router = express.Router();
+const User = require("../models/user"); // Ensure this matches your model file name
 
-// 1. Define the Schema (the structural blueprint of your document)
-const userSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true
-    },
-    contact: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    role: {
-        type: String,
-        default: 'guest'
-    }
-}, { 
-    // CRITICAL: Forces Mongoose to talk directly to your existing 
-    // collection in MongoDB Atlas, preventing it from making a new one.
-    collection: 'users' 
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// 2. Compile the Schema into a Model and export it
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+module.exports = router;

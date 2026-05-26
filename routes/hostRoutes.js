@@ -2,21 +2,28 @@
 const express = require('express');
 const router = express.Router();
 const Listing = require('../models/listing');
+const Host = require('../models/host');
 
 // =====================================================================
 // ENDPOINT 1: FETCH ONLY PROPERTIES OWNED BY A SPECIFIC HOST OBJECTID
 // URL: GET /api/host/listings/my-listings
 // =====================================================================
-router.get('/listings/my-listings', async (req, res) => {
+router.get('/my-listings', async (req, res) => {
     try {
-        // Hardcoded development bypass host ID matching host.js exactly
-        const DEV_HOST_ID = "65f1a2b3c4d5e6f7a8b9c002"; 
+        const authHostId = req.headers['x-host-profile-id'] || req.query.hostProfileId;
 
-        // Query matching your schema fields
-        const myProperties = await Listing.find({ host: DEV_HOST_ID });
-        res.status(200).json(myProperties);
+        if (!authHostId) {
+            return res.status(400).json({ 
+                error: "Identification missing. Please provide a valid hostProfileId context pointer." 
+            });
+        }
+
+        const listings = await Listing.find({ host: authHostId });
+        res.status(200).json(listings);
+
     } catch (err) {
-        res.status(500).json({ error: "Failed to gather host listings: " + err.message });
+        console.error("💥 Portfolio Query Fault:", err.message);
+        res.status(500).json({ error: "Failed to isolate host listing data: " + err.message });
     }
 });
 
@@ -26,20 +33,21 @@ router.get('/listings/my-listings', async (req, res) => {
 // =====================================================================
 router.post('/listings/create', async (req, res) => {
     try {
-        // Enforce a rock-solid, valid 24-character hex string for testing
-        const VALID_DEV_HOST_ID = "65f1a2b3c4d5e6f7a8b9c002";
+        // FIXED: Dynamically capture the creating host's ID sent from the frontend body form parameters
+        const currentHostId = req.body.host;
+
+        if (!currentHostId || currentHostId.trim() === "") {
+            return res.status(400).json({ error: "Cannot create listing. hostProfileId is missing." });
+        }
 
         const newListing = new Listing({
             name: req.body.name || "Unnamed Accommodation",
             price: Number(req.body.price) || 0,
             type: req.body.type || "Property",
             description: req.body.description || "",
-            locationID: req.body.locationID || "Not Specified", // Correct String type field mapping
-            
-            // Force the fallback if hostId is missing, empty, or undefined
-            host: (req.body.hostId && req.body.hostId.trim() !== "") ? req.body.hostId : VALID_DEV_HOST_ID, 
-            
-            image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80'
+            locationID: req.body.locationID || "Not Specified",
+            host: currentHostId, // Assigned cleanly to the actual logged-in host
+            image: req.body.image || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80'
         });
 
         const savedItem = await newListing.save();
@@ -56,22 +64,27 @@ router.post('/listings/create', async (req, res) => {
 // =====================================================================
 router.put('/listings/edit/:id', async (req, res) => {
     try {
-        const DEV_HOST_ID = "65f1a2b3c4d5e6f7a8b9c002"; 
+        // FIXED: Capture the updating host's real ID instead of forcing a fallback placeholder value
+        const currentHostId = req.body.host;
 
-        // We target fields explicitly to make sure everything maps cleanly
+        if (!currentHostId) {
+            return res.status(400).json({ error: "Modification rejected. hostProfileId parameter required." });
+        }
+
         const updatePayload = {
-            name: req.body.name,         
+            name: req.body.name,          
             price: Number(req.body.price), 
             locationID: req.body.locationID,    
             type: req.body.type,
+            image: req.body.image, 
             description: req.body.description,
-            host: DEV_HOST_ID // Explicitly pass the host relation so validation doesn't flag it missing
+            host: currentHostId // Preserves structural integrity of current owner index fields
         };
 
         const updatedItem = await Listing.findByIdAndUpdate(
             req.params.id,
             { $set: updatePayload }, 
-            { new: true, runValidators: false } // FIX: Turn off strict validator flag during dev feature testing
+            { new: true, runValidators: true }
         );
 
         if (!updatedItem) {
@@ -82,7 +95,6 @@ router.put('/listings/edit/:id', async (req, res) => {
         res.status(200).json(updatedItem);
 
     } catch (err) {
-        // This log prints the EXACT reason Mongoose is complaining into your terminal console!
         console.error("💥 MONGO UPDATE REJECTED:", err.message);
         res.status(400).json({ error: "Database update verification failure: " + err.message });
     }
