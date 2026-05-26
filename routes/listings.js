@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Listing = require('../models/Listing');
-
+const Booking = require('../models/booking');
 // ==========================================
 // 1. GET ALL LISTINGS (For Guest Dashboard)
 // ==========================================
 router.get('/', async (req, res) => {
     try {
-        const { search, type, sort, maxPrice } = req.query;
+        // 🛠️ FIXED: Added locationID to the extracted query variables
+        const { search, type, sort, maxPrice, locationID, start, end } = req.query;
         let query = {};
 
         // Use 'name' instead of 'title' to match your Atlas data structure
@@ -20,12 +21,31 @@ router.get('/', async (req, res) => {
             query.type = type;
         }
 
+        // 🛠️ FIXED: Location Filter (Case-Insensitive & Partial Matching)
+        if (locationID) {
+            query.locationID = { $regex: locationID, $options: 'i' };
+        }
+
+        if (start && end) {
+            const checkIn = new Date(start);
+            const checkOut = new Date(end);
+        
+            const busyBookings = await Booking.find({
+                $and: [
+                    { startDate: { $lt: checkOut } },
+                    { endDate: { $gt: checkIn } }
+                ]
+            }).select('listingId');
+
+            const busyListingIds = busyBookings.map(b => b.listingId);
+            query._id = { $nin: busyListingIds };
+        }
+
+        let listingsQuery = Listing.find(query);
         // Filter by Price if requested
         if (maxPrice) {
             query.price = { $lte: Number(maxPrice) };
         }
-
-        let listingsQuery = Listing.find(query);
 
         // Sorting Logic
         if (sort === 'price_asc') {
@@ -39,6 +59,7 @@ router.get('/', async (req, res) => {
         const listings = await listingsQuery;
         res.json(listings);
     } catch (err) {
+        console.error("Database Query Error:", err);
         res.status(500).json({ error: "Failed to fetch listings from cluster." });
     }
 });

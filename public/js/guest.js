@@ -40,6 +40,7 @@ async function renderDashboardGrid() {
     const params = new URLSearchParams();
 
     // Location Filter
+
     if (locationValue && locationValue !== "") {
         params.append('locationID', locationValue);
     }

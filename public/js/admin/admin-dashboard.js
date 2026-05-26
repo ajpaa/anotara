@@ -46,7 +46,8 @@ async function loadDashboard() {
     ]);
 
     const listings = await listingsRes.json();
-    const bookings = await bookingsRes.json();
+    const rawBookings = await bookingsRes.json();
+    const bookings = Array.isArray(rawBookings) ? rawBookings : [];
     const users = await usersRes.json();
 
     const hosts = users.filter((u) => u.role === "host");
@@ -163,9 +164,14 @@ function bookingRow(b) {
       })
     : "N/A";
 
-  const guestName = b.guestName || "Unknown Guest";
+  const guestName =
+    b.guestName && b.guestName !== "Anonymous Guest"
+      ? b.guestName
+      : b.guestId?.username
+        ? b.guestId.username
+        : "Unknown Guest";
   const listingName =
-    b.listing?.name || b.listingId?.name || "Unknown Property";
+    b.listingId && b.listingId.name ? b.listingId.name : "Unknown Property";
 
   return `
         <div style="padding: 12px 0; border-bottom: 1px solid #eee;">
