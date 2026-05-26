@@ -445,8 +445,7 @@ input[type="date"], input[type="text"] {
 
 .no-charge-text { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin: 15px 0; }
 .total-row { display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 15px; }
-  background: var(--bg-light);
-}
+
 
 .details-layout {
   display: grid;
