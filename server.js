@@ -108,7 +108,16 @@ app.get('/api/auth/logout', (req, res) => {
 
 app.get('/api/guest/profile', async (req, res, next) => {
     try {
-        const guestData = await User.findOne({ role: 'guest' }).select('username');
+        const userId = req.session?.user?._id || req.user?._id;
+
+        if (!userId) {
+            console.log("No User ID found in session!");
+            return res.status(401).json({ error: "Unauthorized. No session found." });
+        }
+
+        const guestData = await User.findById(userId).select('username');
+        console.log("Database Lookup Result:", guestData);
+
         res.json(guestData);
     } catch (err) {
         next(err);
