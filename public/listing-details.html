@@ -2,79 +2,83 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Listing Details | Allu&Co</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listing Details | Ano Tara?</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
 </head>
 <body class="details-page">
-    <nav class="topbar">
-        <div class="logo" onclick="location.href='guest.html'" style="cursor:pointer">Allu&Co</div>
-        <div class="search-mini"><input type="text" placeholder="Search here..."><i class="fa-solid fa-magnifying-glass"></i></div>
-    </nav>
+
+<nav class="topbar">
+    <div class="logo" onclick="window.location.href='guest.html'">Ano Tara?</div>
+    <div class="nav-icons">
+        <a href="guest.html"><i class="fa-solid fa-house"></i></a>
+        <a href="guest.html"><i class="fa-solid fa-magnifying-glass"></i></a>
+        <a href="favorites.html"><i class="fa-solid fa-heart"></i></a>
+        <a href="profile.html"><i class="fa-solid fa-circle-user"></i></a>
+    </div>
+</nav>
 
     <main class="details-container">
-        <section class="details-left">
-            <div class="image-gallery">
-                <div class="main-img"><img id="det-img" src="" alt="Room"></div>
-                <div class="side-imgs">
-                    <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=400" alt="Sub1">
-                    <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=400" alt="Sub2">
-                </div>
+        <header class="details-header">
+            <h1 id="det-title">Loading property...</h1>
+            <div class="header-meta">
+                <span id="det-loc"></span>
+                <span class="rating"><i class="fa-solid fa-star"></i> 4.9 (New)</span>
             </div>
+        </header>
 
-            <h1 id="det-title">Loading...</h1>
-            <p class="address"><i class="fa-solid fa-location-dot"></i> <span id="det-loc"></span></p>
-            
-            <div class="tags">
-                <span>Minimalist</span><span>Beach House</span><span>Private Pool</span>
-            </div>
-
-            <h3>Hotel Features</h3>
-            <div class="features">
-                <span><i class="fa-solid fa-wifi"></i> Wifi</span>
-                <span><i class="fa-solid fa-bed"></i> King Bed</span>
-                <span><i class="fa-solid fa-utensils"></i> Breakfast</span>
-            </div>
-
-            <div class="description">
-                <h3>Our House</h3>
-                <p id="det-desc">Experience the ultimate comfort in our room...</p>
-            </div>
-        </section>
-
-        <aside class="details-right">
-            <div class="booking-card">
-                <div class="price-header">
-                    <span class="price-big">$<span id="det-price">0</span></span>/night
-                    <span class="discount-tag">10% Off</span>
+        <div class="details-grid">
+            <section class="content-main">
+                <div class="image-gallery">
+                    <img id="det-img" src="https://placehold.co/800x500?text=Loading+Image" alt="Property">
                 </div>
 
-                <form id="detailsBookingForm">
-                    <div class="form-row">
-                        <label>Check In</label>
-                        <input type="date" id="startDate" required>
-                    </div>
-                    <div class="form-row">
-                        <label>Check Out</label>
-                        <input type="date" id="endDate" required>
-                    </div>
-                    <div class="form-row">
-                        <label>Name</label>
-                        <input type="text" id="guestName" placeholder="Your Name" required>
-                    </div>
-                    <div class="form-row">
-                        <label>Payment Proof (Image)</label>
-                        <input type="file" id="bookingImage">
-                    </div>
+                <div class="description-section">
+                    <h2>About this <span id="det-type" style="color: var(--primary-teal);">stay</span></h2>
+                    <p id="det-desc">Fetching latest information from host...</p>
+                </div>
 
-                    <div class="total-summary">
-                        <p>Total Cost: <span class="bold">$<span id="total-price">0</span></span></p>
+                <div class="amenities">
+                    <h3>What this place offers</h3>
+                    <div class="amenity-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <span><i class="fa-solid fa-wifi"></i> Fast WiFi</span>
+                        <span><i class="fa-solid fa-car"></i> Free parking</span>
+                        <span><i class="fa-solid fa-kitchen-set"></i> Kitchen</span>
+                        <span><i class="fa-solid fa-snowflake"></i> AC</span>
                     </div>
+                </div>
+            </section>
 
-                    <button type="submit" class="pay-btn">Pay Now <i class="fa-solid fa-arrow-right"></i></button>
-                </form>
-            </div>
-        </aside>
+            <aside class="booking-sidebar">
+                <div class="booking-card">
+                    <div class="price-header">
+                        <span id="det-price">₱0</span> <small>/ night</small>
+                    </div>
+                    
+                    <form id="detailsBookingForm">
+                        <div class="input-group">
+                            <label>Check-in / Check-out</label>
+                            <div class="date-inputs">
+                                <input type="date" id="startDate" required>
+                                <input type="date" id="endDate" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Guest Name</label>
+                            <input type="text" id="guestName" placeholder="Full name for booking" required>
+                        </div>
+                        <button type="submit" class="btn-reserve">Reserve Now</button>
+                    </form>
+                    
+                    <p class="no-charge-text">No payment required yet</p>
+                    <div class="total-row">
+                        <span>Total stay cost</span>
+                        <strong id="total-price">₱0</strong>
+                    </div>
+                </div>
+            </aside>
+        </div>
     </main>
 
     <script src="js/details.js"></script>

@@ -1,5 +1,3 @@
-const API = "/guest";
-
 // calendar - wala pang click feature 'to
 const monthYear = document.querySelector(".month-year");
 const dates = document.querySelector(".dates");
@@ -51,10 +49,11 @@ nextBtn.addEventListener('click', () => {
 
 updateCalendar();
 
-async function loadGuests() {
-    const res = await fetch(API);
-    let data = await res.json();
-
-    const guestName = document.getElementById('guest-name');
-    guestName.innerHTML = "";
+async function displayProfileGuest() {
+    const res = await fetch('/api/guest/profile');
+    const data = await res.json();
+    const nameElement = document.getElementById("guest-name");
+    nameElement.textContent = data.username;
 }
+
+displayProfileGuest();

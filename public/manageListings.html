@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ano Tara? | Guest Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="guest-body">
+
+    <nav class="topbar">
+        <div class="logo">Ano Tara?</div>
+        <div class="nav-icons">
+            <a href="guest.html" title="Home"><i class="fa-solid fa-house"></i></a>
+            <a href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="favorites.html" title="Favorites"><i class="fa-solid fa-heart"></i></a>
+            <a href="profile.html" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
+        </div>
+    </nav>
+
+    <header class="hero" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://i.pinimg.com/1200x/a8/2a/ca/a82acacb6ea75cf2a63e62f50657564e.jpg'); background-size: cover; background-position: center;">
+        <div class="hero-content">
+            <h1>Property Inventory Control</h1>
+            <p>Create, update details, or clear listings off the active cluster registry</p>
+        </div>        
+    </header>
+
+    <main class="content-area">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2 class="section-title" style="margin-bottom: 0;">Active Accommodations</h2>
+            <button class="view-more-teal" onclick="toggleForm()">+ Create New Listing</button>
+        </div>
+
+        <div id="listing-form-container" style="display: none; background: #fafafa; padding: 30px; border-radius: 20px; margin-bottom: 35px; border: 1px solid #eee;">
+            <h3 id="form-title" style="margin-bottom: 15px; font-weight: 800; color: var(--teal-main);">Add an Accommodation</h3>
+            <form id="listing-form" onsubmit="handleFormSubmit(event)">
+                <input type="hidden" id="form-listing-id">
+                <div class="input-group-v2"><input type="text" id="form-name" placeholder="Property Title (e.g., Beachfront Condo)" required></div>
+                <div class="input-group-v2"><input type="number" id="form-price" placeholder="Price per night (₱)" required></div>
+                <div class="input-group-v2"><input type="text" id="form-location" placeholder="Location City (e.g., Caloocan)" required></div>
+                <div class="input-group-v2"><input type="text" id="form-type" placeholder="Property Type (e.g., Villa, Apartment)" required></div>
+                <div class="input-group-v2"><input type="text" id="form-desc" placeholder="Write an enticing summary description..."></div>
+                <button type="submit" class="teal-submit-btn">Save Real Estate Data Entry</button>
+            </form>
+        </div>
+
+        <div id="listings-grid" class="listings-grid">
+            </div>
+    </main>
+
+    <script src="js/host.js"></script>
+
+</body>
+</html>
+
