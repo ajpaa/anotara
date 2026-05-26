@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Booking = require('../models/Booking');
+const Booking = require('../models/booking');
 const Listing = require('../models/Listing'); // Make sure your filename casing matches your file system!
 const mongoose = require('mongoose'); 
 
