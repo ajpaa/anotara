@@ -11,7 +11,7 @@ if (!listingId) {
 }
 
 /**
- * Fetch and display listing data from the host's database
+ * Fetch and display listing data
  */
 async function loadListingDetails() {
     try {
@@ -21,39 +21,34 @@ async function loadListingDetails() {
         const listing = await res.json();
         pricePerNight = Number(listing.price || 0);
 
-        // Populate header and meta info
+        // Populate elements
         if(document.getElementById('det-title')) document.getElementById('det-title').innerText = listing.name;
         if(document.getElementById('det-loc')) {
             document.getElementById('det-loc').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${listing.locationID}`;
         }
         
-        // Populate Pricing
         const formattedPrice = pricePerNight.toLocaleString();
         if(document.getElementById('det-price')) document.getElementById('det-price').innerText = `₱${formattedPrice}`;
-        updateTotalPrice(); // Initial total price display
         
-        // Handle Images (Primary from array or fallback)
+        // Populate image, description, type
         if(document.getElementById('det-img')) {
             document.getElementById('det-img').src = (listing.images && listing.images.length > 0) 
                 ? listing.images[0] 
                 : (listing.image || 'https://placehold.co/800x500?text=No+Image+Available');
         }
-        
-        // Description and Type
-        if(document.getElementById('det-desc')) {
-            document.getElementById('det-desc').innerText = listing.description || "No description provided by the host.";
-        }
-        if(document.getElementById('det-type')) {
-            document.getElementById('det-type').innerText = listing.type || "Entire Home";
-        }
+        if(document.getElementById('det-desc')) document.getElementById('det-desc').innerText = listing.description || "No description provided.";
+        if(document.getElementById('det-type')) document.getElementById('det-type').innerText = listing.type || "Entire Home";
 
+        updateTotalPrice();
     } catch (err) {
         console.error("Error loading details:", err);
-        alert("Could not load property details. Returning to search.");
         window.location.href = 'guest.html';
     }
 }
 
+/**
+ * Calculate total price based on dates
+ */
 /**
  * Calculate total price based on dates
  */
@@ -65,38 +60,53 @@ function updateTotalPrice() {
     if (start && end) {
         const startDate = new Date(start);
         const endDate = new Date(end);
-        const diffTime = Math.abs(endDate - startDate);
+        const diffTime = endDate - startDate;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
-        if (diffDays > 0) {
-            const total = diffDays * pricePerNight;
-            totalDisplay.innerText = `₱${total.toLocaleString()}`;
-            return;
-        }
+        // If 0 or negative days, show nightly rate, otherwise show calculated total
+        const daysToCharge = diffDays > 0 ? diffDays : 1; 
+        const total = daysToCharge * pricePerNight;
+        
+        totalDisplay.innerText = `₱${total.toLocaleString()}`;
+    } else {
+        // Default to showing the price per night if no dates selected
+        totalDisplay.innerText = `₱${pricePerNight.toLocaleString()}`;
     }
-    // Fallback if dates are invalid or not selected
-    totalDisplay.innerText = `₱${pricePerNight.toLocaleString()}`;
 }
 
 /**
- * Handle Booking Form Submission
+ * Form Handling
  */
 const bookingForm = document.getElementById('detailsBookingForm');
 if (bookingForm) {
-    // Add listeners to date inputs to update total price live
     document.getElementById('startDate').addEventListener('change', updateTotalPrice);
     document.getElementById('endDate').addEventListener('change', updateTotalPrice);
 
     bookingForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        const userSession = localStorage.getItem('user');
+        if (!userSession) {
+            alert("You must be logged in to book.");
+            window.location.href = 'login.html';
+            return;
+        }
+        const guest = JSON.parse(userSession);
+
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
         
+        if (new Date(start) >= new Date(end)) {
+            alert("Check-out date must be after the check-in date.");
+            return;
+        }
+
         const bookingData = {
             listingId: listingId,
-            guestName: document.getElementById('guestName').value,
-            startDate: document.getElementById('startDate').value,
-            endDate: document.getElementById('endDate').value,
-            totalPrice: document.getElementById('total-price').innerText,
-            status: 'Pending'
+            guestId: guest._id,
+            startDate: start,
+            endDate: end,
+            status: 'pending'
         };
 
         try {
@@ -107,16 +117,21 @@ if (bookingForm) {
             });
 
             if (res.ok) {
-                alert(`Success! Your booking request for "${document.getElementById('det-title').innerText}" has been sent to the host.`);
+                alert("Booking request sent successfully!");
                 window.location.href = 'guest.html';
             } else {
-                alert("Failed to send booking request. Please check your dates and try again.");
+                const errData = await res.json();
+                alert(`Booking failed: ${errData.message || "Try again."}`);
             }
         } catch (error) {
-            console.error("Booking error:", error);
+            alert("Connection error.");
         }
     });
 }
 
-// Initialize on page load
+function resetForm() {
+    bookingForm.reset();
+    document.getElementById('total-price').innerText = "₱0";
+}
+
 document.addEventListener("DOMContentLoaded", loadListingDetails);

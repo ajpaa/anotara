@@ -52,31 +52,39 @@
 
             <aside class="booking-sidebar">
                 <div class="booking-card">
-                    <div class="price-header">
-                        <span id="det-price">₱0</span> <small>/ night</small>
-                    </div>
-                    
-                    <form id="detailsBookingForm">
-                        <div class="input-group">
-                            <label>Check-in / Check-out</label>
-                            <div class="date-inputs">
-                                <input type="date" id="startDate" required>
-                                <input type="date" id="endDate" required>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label>Guest Name</label>
-                            <input type="text" id="guestName" placeholder="Full name for booking" required>
-                        </div>
-                        <button type="submit" class="btn-reserve">Reserve Now</button>
-                    </form>
-                    
-                    <p class="no-charge-text">No payment required yet</p>
-                    <div class="total-row">
-                        <span>Total stay cost</span>
-                        <strong id="total-price">₱0</strong>
-                    </div>
-                </div>
+    <div class="price-header" style="margin-bottom: 15px;">
+        <span id="det-price" style="font-size: 1.5rem; font-weight: 800;">₱0</span> 
+        <small>/ night</small>
+    </div>
+    
+    <form id="detailsBookingForm">
+        <div class="input-group">
+            <label>Check-in / Check-out</label>
+            <div class="date-inputs" style="display: flex; gap: 10px;">
+                <input type="date" id="startDate" required>
+                <input type="date" id="endDate" required>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label>Guest Name</label>
+            <input type="text" id="guestName" placeholder="Full name for booking" required>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px; margin-bottom: 20px;">
+            <button type="submit" class="btn-reserve" style="flex: 2;">Confirm Booking</button>
+            <button type="button" class="btn-cancel" onclick="resetForm()" style="flex: 1;">Cancel</button>
+        </div>
+        <p class="no-charge-text" style="text-align: center; color: #888; font-size: 0.85rem;">
+            No payment required yet
+        </p>
+        
+        <div class="total-row" style="display: flex; justify-content: space-between; margin-top: 15px; font-weight: 700;">
+            <span>Total stay cost</span>
+            <strong id="total-price">₱0</strong>
+        </div>
+    </form>
+</div>
             </aside>
         </div>
     </main>
