@@ -1612,3 +1612,12 @@ input[type="date"], input[type="text"] {
 .host-card-actions .btn-reject:hover {
     background-color: #e04347; /* Darker Red */
 }
+
+.logo-img {
+    height: 60px;      /* 1. Sets a fixed height so it fits nicely in a topbar */
+    width: auto;       /* 2. Maintains the correct aspect ratio (no stretching) */
+    display: block;    /* 3. Removes unwanted whitespace beneath the image */
+    
+    /* Optional: Smoothly scales down if the original image is huge */
+    object-fit: contain; 
+}

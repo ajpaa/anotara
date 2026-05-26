@@ -155,7 +155,6 @@ router.put('/:id', async (req, res) => {
         const bookingId = req.params.id;
         const { status } = req.body; 
 
-        // 🎯 OVERLAP PROTECTION ON APPROVAL: Check conflicts before turning 'pending' into 'approved'
         if (status === 'approved') {
             const currentBooking = await Booking.findById(bookingId);
             if (!currentBooking) {
