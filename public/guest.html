@@ -14,7 +14,7 @@
         <div class="logo">Ano Tara?</div>
         <div class="nav-icons">
             <a href="guest.html" title="Home"><i class="fa-solid fa-house"></i></a>
-            <a href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <!--<a href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>-->
             <a href="favorites.html" title="Favorites"><i class="fa-solid fa-heart"></i></a>
             <a href="profile.html" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
         </div>
@@ -28,22 +28,18 @@
         
         <div class="glass-search">
             <div class="s-item">
-                <label>Location</label>
-                <input type="text" placeholder="Where are you going?">
+                <label>Search Property</label>
+                <input type="text" id="name" placeholder="Search for a property">
             </div>
             <div class="s-item">
                 <label>Check in</label>
-                <input type="text" placeholder="Add dates">
+                <input type="date" id="checkinDate" placeholder="Add Check in date">
             </div>
             <div class="s-item">
                 <label>Check out</label>
-                <input type="text" placeholder="Add dates">
+                <input type="date" id="checkoutDate" placeholder="Add Check out date">
             </div>
-            <div class="s-item">
-                <label>Guests</label>
-                <input type="text" placeholder="Add guests">
-            </div>
-            <button class="search-circle"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <button class="search-circle" id="search-circle"><i class="fa-solid fa-magnifying-glass"></i></button>
         </div>
     </header>
 
@@ -54,20 +50,40 @@
                 <option value="">Location (NCR)</option>
                 <option value="caloocan">Caloocan</option>
                 <option value="las pinas">Las Piñas</option>
+                <option value="makati">Makati</option>
+                <option value="malabon">Malabon</option>
+                <option value="mandaluyong">Mandaluyong</option>
+                <option value="manila">Manila</option>
+                <option value="marikina">Marikina</option>
+                <option value="muntinlupa">Muntinlupa</option>
+                <option value="navotas">Navotas</option>
+                <option value="paranaque">Parañaque</option>
+                <option value="pasay">Pasay</option>
+                <option value="pasig">Pasig</option>
+                <option value="quezon">Quezon City</option>
+                <option value="san juan">San Juan</option>
+                <option value="taguig">Taguig</option>
+                <option value="valenzuela">Valenzuela</option>
             </select>
         </div>
         <div class="filter-group">
             <i class="fa-solid fa-hotel"></i>
-            <select id="filter-type">
-                <option value="">Type</option>
-                <option value="house">House</option>
-                <option value="condominium">Condominium</option>
-                <option value="apartment">Apartment</option>
+            <select id="filter-type" multiple>
+                <option value=""></option>
+                <option value="House">House</option>
+                <option value="Condominium">Condominium</option>
+                <option value="Apartment">Apartment</option>
+                <option value="Dorm">Dorm</option>
+                <option value="Villa">Villa</option>
             </select>
         </div>
         <div class="filter-group">
             <i class="fa-solid fa-tags"></i>
-            <input type="number" placeholder="Max Price" id="filter-price">
+            <select id="sortby-price">
+                <option value="">Sort by Price</option>
+                <option value="price_asc">Sort by Ascending Price</option>
+                <option value="price_desc">Sort by Descending Price</option>
+            </select>
         </div>
         <div class="filter-group">
             <i class="fa-solid fa-border-all"></i>
@@ -89,4 +105,3 @@
 
 </body>
 </html>
-
