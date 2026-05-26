@@ -1,104 +1,97 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ano Tara? | Guest Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Listing Details | Ano Tara?</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="guest-body">
+<body class="details-page">
 
-    <nav class="topbar">
-        <div class="logo">Ano Tara?</div>
-        <div class="nav-icons">
-            <a href="guest.html" title="Home"><i class="fa-solid fa-house"></i></a>
-            <a href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
-            <a href="favorites.html" title="Favorites"><i class="fa-solid fa-heart"></i></a>
-            <a href="profile.html" title="Profile"><i class="fa-solid fa-circle-user"></i></a>
+<nav class="topbar">
+    <div class="logo" onclick="window.location.href='guest.html'">Ano Tara?</div>
+    <div class="nav-icons">
+        <a href="guest.html"><i class="fa-solid fa-house"></i></a>
+        <a href="guest.html"><i class="fa-solid fa-magnifying-glass"></i></a>
+        <a href="favorites.html"><i class="fa-solid fa-heart"></i></a>
+        <a href="profile.html"><i class="fa-solid fa-circle-user"></i></a>
+    </div>
+</nav>
+
+<main class="details-container">
+    <header class="details-header">
+        <h1 id="det-title">Loading property...</h1>
+        <div class="header-meta">
+            <span id="det-loc"><i class="fa-solid fa-location-dot"></i> Loading location...</span>
+            <span class="rating" style="color: #f39c12;"><i class="fa-solid fa-star"></i> 4.9 (New)</span>
         </div>
-    </nav>
-
-    <header class="hero">
-        <div class="hero-content">
-            <h1>Property Inventory Control</h1>
-            <p>Create, update details, or clear listings off the active cluster registry</p>
-        </div>        
     </header>
 
-    <main class="content-area">
-        <div class="content-header">
-            <h2 class="section-title">Active Accommodations</h2>
-            <button class="view-more-teal" onclick="toggleForm()">+ Create New Listing</button>
-        </div>
+    <div class="details-tabs" style="display: flex; gap: 30px; margin: 20px 0; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+        <span class="tab active" style="color: var(--primary-teal); border-bottom: 2px solid var(--primary-teal); padding-bottom: 8px; cursor: pointer;">Description</span>
+        <span class="tab" style="color: #666; cursor: pointer;">Features</span>
+        <span class="tab" style="color: #666; cursor: pointer;">Virtual Tour</span>
+    </div>
 
-        <div id="listing-form-container">
-            <h3 id="form-title">Add an Accommodation</h3>
-            
-            <form id="listing-form">
-                <input type="hidden" id="form-listing-id">
-                <div class="input-group-v2"><input type="text" id="form-name" placeholder="Property Title (e.g., Beachfront Condo)" required></div>
-                <div class="input-group-v2"><input type="number" id="form-price" placeholder="Price per night (₱)" required></div>
-                
-                <div class="input-group-v2">
-                    <select id="form-location" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; background: white;">
-                        <option value="" disabled selected>Select Location City</option>
-                        <option value="Caloocan">Caloocan</option>
-                        <option value="Las Piñas">Las Piñas</option>
-                        <option value="Makati">Makati</option>
-                        <option value="Malabon">Malabon</option>
-                        <option value="Mandaluyong">Mandaluyong</option>
-                        <option value="Manila">Manila</option>  
-                        <option value="Marikina">Marikina</option>
-                        <option value="Muntinlupa">Muntinlupa</option>
-                        <option value="Navotas">Navotas</option>
-                        <option value="Parañaque">Parañaque</option>
-                        <option value="Pasay">Pasay</option>
-                        <option value="Pasig">Pasig</option>    
-                        <option value="Pateros">Pateros</option>                  
-                        <option value="Quezon City">Quezon City</option>
-                        <option value="San Juan">San Juan</option>
-                        <option value="Taguig">Taguig</option>
-                        <option value="Valenzuela">Valenzuela</option>
-                    </select>
+    <div class="details-grid" style="display: grid; grid-template-columns: 1fr 350px; gap: 40px;">
+        <section class="content-main">
+            <div class="image-gallery">
+                <img id="det-img" src="https://placehold.co/800x500?text=Loading+Image" alt="Property" style="width: 100%; border-radius: 15px;">
+            </div>
+
+            <div class="description-section" style="margin-top: 30px;">
+                <h2>About this <span id="det-type" style="color: var(--primary-teal);">stay</span></h2>
+                <p id="det-desc" style="line-height: 1.6; color: #444;">Fetching latest information from host...</p>
+            </div>
+
+            <div class="amenities-section" style="margin-top: 30px;">
+                <h3>What this place offers</h3>
+                <div class="amenity-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                    <span><i class="fa-solid fa-wifi" style="color: var(--primary-teal);"></i> Fast WiFi</span>
+                    <span><i class="fa-solid fa-bed" style="color: var(--primary-teal);"></i> King Bed</span>
+                    <span><i class="fa-solid fa-bath" style="color: var(--primary-teal);"></i> Bathtub</span>
+                    <span><i class="fa-solid fa-utensils" style="color: var(--primary-teal);"></i> Breakfast</span>
                 </div>
-
-                <div class="input-group-v2"><input type="text" id="form-type" placeholder="Property Type (e.g., Villa, Apartment)" required></div>
-                <div class="input-group-v2"><input type="url" id="form-image" placeholder="Image URL (e.g., https://images.unsplash.com/photo-...)"></div>
-                <div class="input-group-v2"><input type="text" id="form-desc" placeholder="Write an enticing summary description..."></div>
-                <button type="submit" class="teal-submit-btn">Save Real Estate Data Entry</button>
-                <button type="button" class="cancel-btn" onclick="handleCancel()" >
-                    Cancel
-                </button>
-            </form>
-        </div>
-
-        <div id="listings-grid" class="listings-grid">
             </div>
-    </main>
+        </section>
 
-    <script src="js/hostListing.js"></script>
-    <div id="status-modal" class="modal-overlay">
-    <div class="modal-box">
-        <h3 id="status-modal-title">Notification</h3>
-        <p id="status-modal-message">Message text goes here.</p>
-        <div class="modal-actions">
-            <button class="modal-btn confirm-btn" onclick="closeStatusModal()">OK</button>
-        </div>
-    </div>
-    </div>
+        <aside class="booking-sidebar">
+            <div class="booking-card" style="border: 1px solid #e0e0e0; padding: 24px; border-radius: 15px; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 100px;">
+                <div class="price-header" style="margin-bottom: 15px;">
+                    <span id="det-price" style="font-size: 1.5rem; font-weight: 800;">₱0</span> 
+                    <small>/ night</small>
+                </div>
+                
+                <form id="detailsBookingForm">
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Check-in / Check-out</label>
+                        <div class="date-inputs" style="display: flex; gap: 10px; margin-top: 5px;">
+                            <input type="date" id="startDate" required style="width: 100%; padding: 8px;">
+                            <input type="date" id="endDate" required style="width: 100%; padding: 8px;">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Guest Name</label>
+                        <input type="text" id="guestName" placeholder="Full name for booking" required style="width: 100%; padding: 10px; box-sizing: border-box;">
+                    </div>
 
-    <div id="confirm-modal" class="modal-overlay">
-        <div class="modal-box">
-            <h3>Are you sure?</h3>
-            <p id="confirm-modal-message">Do you want to proceed with this action?</p>
-            <div class="modal-actions">
-                <button id="confirm-modal-yes" class="modal-btn danger-btn">Yes</button>
-                <button class="modal-btn cancel-btn" onclick="closeConfirmModal()">No</button>
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button type="submit" class="btn-reserve" style="flex: 1; background: var(--primary-teal); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer;">Confirm Booking</button>
+                        <button type="button" class="btn-cancel" onclick="resetForm()" style="flex: 1; padding: 15px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">Cancel</button>
+                    </div>
+                    
+                    <div class="total-row" style="display: flex; justify-content: space-between; margin-top: 20px; font-weight: 700; border-top: 1px solid #eee; padding-top: 15px;">
+                        <span>Total stay cost</span>
+                        <strong id="total-price">₱0</strong>
+                    </div>
+                </form>
             </div>
-        </div>
+        </aside>
     </div>
+</main>
 
+<script src="js/details.js"></script>
 </body>
 </html>

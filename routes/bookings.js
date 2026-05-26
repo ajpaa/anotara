@@ -34,6 +34,7 @@ router.post('/', async (req, res) => {
         const savedBooking = await newBooking.save();
         res.status(201).json(savedBooking);
     } catch (err) {
+        console.error("Booking Creation Error:", err);
         res.status(400).json({ message: "Error creating booking", error: err.message });
     }
 });
@@ -140,7 +141,7 @@ router.put('/:id', async (req, res) => {
         );
 
         if (!updatedBooking) {
-            return res.status(404).json({ error: "Booking session not found." });
+            return res.status(404).json({ error: "Booking not found." });
         }
 
         res.status(200).json(updatedBooking);
