@@ -1,131 +1,54 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const session = require("express-session");
-const path = require("path"); // 🆕 [ADDED] for file paths
+const express = require('express');
+const dotenv = require('dotenv');
+const path = require('path');
+const mongoose = require('mongoose'); 
+const hostRoutes = require('./routes/hostRoutes');
+const authRoutes = require("./routes/auth"); // Using this variable cleanly now!
 
+// 1. LOAD DOTENV FIRST
+dotenv.config(); 
+
+console.log("Checking MONGO_URI:", process.env.MONGO_URI ? "Found! ✅" : "Not Found! ❌");
+
+const connectDB = require('./config/db');
 const app = express();
 
-app.use(express.json());
+// 2. CONNECT TO DATABASE
+connectDB();
 
-// ==============================
-// 🆕 [ADDED] Serve static files
-// ==============================
-app.use(express.static("public"));
-
-
-// ==============================
-// 🆕 Session Middleware
-// ==============================
-app.use(session({
-    secret: "secret123",
-    resave: false,
-    saveUninitialized: true
-}));
-
-
-// ==============================
-// MongoDB Connection
-// ==============================
-mongoose.connect("mongodb://127.0.0.1:27017/airbnbDB")
-    .then(() => console.log("MongoDB Connected"))
-    .catch(err => console.log(err));
-
-
-// ==============================
-// Schema + Model
-// ==============================
-const listingSchema = new mongoose.Schema({
-    firstName: String,
-    lastName: String,
-    hostId: String,
-    contact: String,
-    location: String,
-    price: Number,
-    image: String
-});
-
-const Listing = mongoose.model("Listing", listingSchema);
-
-
-// ==============================
-// AUTH MIDDLEWARE
-// ==============================
-function isAuthenticated(req, res, next) {
-    if (req.session.user) return next();
-    res.redirect("/loginPage");
-}
-
-
-
-
-// ==============================
-// LOGIN ROUTE
-// ==============================
-app.post("/login", (req, res) => {
-    const { username, password } = req.body;
-
-    if (username === "admin" && password === "123") {
-        req.session.user = { role: "admin" };
-        return res.json({ role: "admin" });
-    }
-
-    if (username === "student" && password === "123") {
-        req.session.user = { role: "student" };
-        return res.json({ role: "student" });
-    }
-
-    res.status(401).send("Invalid credentials");
-});
-
-
-// ==============================
-// LOGOUT
-// ==============================
-app.get("/logout", (req, res) => {
-    req.session.destroy(() => {
-        res.redirect("/loginPage");
-    });
-});
-
-
-// ==============================
-// ROUTES (NOW USING HTML FILES)
-// ==============================
-app.get("/", isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, "public/browseListing.html"));
-});
-
-app.get("/listings", async (req, res) => {
-    const listings = await Listing.find();
-    res.json(listings);
-});
-
-app.post("/listings", async (req, res) => {
+// =========================================================
+// NEW: FORCE MONGOOSE TO ALIGN SCHEMA AND INDEX LAYOUTS
+// =========================================================
+const Host = require('./models/host');
+mongoose.connection.once('open', async () => {
     try {
-        const listing = await Listing.create(req.body);
-        res.json(listing);
+        // This drops broken ghost indexes in Atlas making fields vanish
+        await Host.syncIndexes();
+        console.log("🎯 MongoDB Host Collection Indexes Synchronized Perfectly!");
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("⚠️ Index Sync Warning:", err.message);
     }
 });
 
+// 3. MIDDLEWARE
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.get("/browseListing", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/browseListing.html"));
+// 4. API ROUTES (Ensure there is only one declaration per route!)
+app.use('/api/auth', authRoutes); 
+app.use('/api/listings', require('./routes/listings'));
+app.use('/api/bookings', require('./routes/bookings')); // This maps to routes/bookings.js
+app.use('/api/host', hostRoutes);
+app.use("/api/users", require("./routes/users"));
+
+// 5. FRONTEND ROUTING
+app.get('/guest', (req, res) => res.sendFile(path.join(__dirname, 'public', 'guest.html')));
+app.get('/host', (req, res) => res.sendFile(path.join(__dirname, 'public', 'host.html')));
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
+app.get('/manageListings', (req, res) => res.sendFile(path.join(__dirname, 'public', 'manageListings.html')));
+
+// 6. START SERVER
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`🚀 Server spinning at http://localhost:${PORT}`);
 });
-
-app.get("/loginPage", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/login.html"));
-});
-
-app.get("/createListing", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/createListing.html"));
-});
-
-
-app.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
-});
-// ==============================
-// CRUD API
-// ==============================

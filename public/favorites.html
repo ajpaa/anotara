@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ano Tara? | My Favorites</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="fav-page">
+
+    <nav class="topbar">
+        <div class="logo" onclick="location.href='guest.html'">Ano Tara?</div>
+        <div class="nav-icons">
+            <a href="guest.html"><i class="fa-solid fa-house"></i></a>
+            <a href="favorites.html" class="active-link"><i class="fa-solid fa-heart"></i></a>
+            <a href="profile.html"><i class="fa-solid fa-circle-user"></i></a>
+        </div>
+    </nav>
+
+    <header class="fav-header">
+        <h1>Explore Your Favorites</h1>
+        <p>See every detail of your saved stays from the comfort of your own space.</p>
+        
+        <div class="fav-filters">
+            <button class="pill active">Featured</button>
+            <button class="pill">Apartments</button>
+            <button class="pill">Condominium</button>
+            <button class="pill">House</button>
+            <button class="pill">Bungalow</button>
+        </div>
+    </header>
+
+    <main class="content-area">
+        <div id="favorites-grid" class="listings-grid-v2">
+            <p class="empty-msg">You haven't saved any listings yet.</p>
+        </div>
+
+        <div class="center-btn">
+            <button class="view-more-teal">View More</button>
+        </div>
+    </main>
+
+    <script src="js/favorites.js"></script>
+</body>
+</html>
