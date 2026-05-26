@@ -480,6 +480,7 @@
     position: sticky;
     top: 57px;
     z-index: 998;
+    box-sizing: border-box;
 }
 
 .admin-banner-bar.visible {

@@ -246,3 +246,21 @@ document
       alert("Server error. Could not delete listing.");
     }
   });
+
+  // Add this inside your DOMContentLoaded or at the bottom of your JS file
+window.addEventListener("resize", () => {
+  const menu = document.getElementById("mobile-menu");
+  const icon = document.getElementById("hamburger-icon");
+
+  // If screen width is wider than 768px (the mobile breakpoint)
+  if (window.innerWidth > 768) {
+    // Force close the menu
+    menu.classList.remove("menu-open");
+    
+    // Reset icon back to bars
+    if (icon) {
+      icon.classList.remove("fa-xmark");
+      icon.classList.add("fa-bars");
+    }
+  }
+});
