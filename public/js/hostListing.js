@@ -88,7 +88,8 @@ async function fetchHostListings() {
     gridContainer.innerHTML = `<p class="empty-msg">Loading your properties from Atlas...</p>`;
 
     try {
-        const response = await fetch(`/api/host/listings/my-listings`);
+        // FIXED: Appended the query string parameter so the backend isolates listings for this host only
+        const response = await fetch(`/api/host/my-listings?hostProfileId=${CURRENT_HOST_ID}`);        
         if (!response.ok) throw new Error("Failed to fetch listings data");
         
         const listings = await response.json();
@@ -171,7 +172,6 @@ async function handleCancel() {
     const descField = document.getElementById("form-desc").value;
     
     if (nameField || descField) {
-        // Asynchronous structural confirmation call instead of blocking window execution
         const confirmCancel = await showConfirmModal("Are you sure you want to discard your changes?");
         if (!confirmCancel) return;
     }
@@ -248,7 +248,7 @@ async function handleFormSubmit(e) {
 
         showStatusModal(
             "Success", 
-            isEditing ? "Listing details updated safely!" : "New lisitng added to profile!"
+            isEditing ? "Listing details updated safely!" : "New listing added to profile!"
         );
         toggleForm();          
         fetchHostListings();   

@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
-    listing: { 
+    // FIXED: Changed 'listing' to 'listingId' to match your database column header
+    listingId: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Listing', 
         required: true 
     },
-    guest: { 
+    // FIXED: Changed 'guest' to 'guestId' to match your database column header
+    guestId: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 
         required: true 

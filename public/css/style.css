@@ -305,7 +305,7 @@ input[type="date"], input[type="text"] {
 .btn-reserve {
     width: 100%;
     background: var(--primary-teal);
-    color: white;
+    color: black;
     border: none;
     padding: 15px;
     border-radius: 8px;

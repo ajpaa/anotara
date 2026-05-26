@@ -1,5 +1,5 @@
 // ==========================================
-// 1. AUTH LOGIC & SESSION STAGING
+// 1. AUTH LOGIC & DASHBOARD PROTECTION
 // ==========================================
 const loggedInUserSession = localStorage.getItem('user');
 let parsedSessionData = loggedInUserSession ? JSON.parse(loggedInUserSession) : null;
@@ -18,24 +18,24 @@ if (!parsedSessionData || parsedSessionData.role !== 'host') {
 
 const CURRENT_HOST_ID = parsedSessionData.hostProfileId;
 
-// Expose transactional functions explicitly to global window context
+// Expose transactional functions explicitly to global window context for HTML onclick attributes
 window.updateBookingStatus = updateBookingStatus;
 window.closeStatusModal = closeStatusModal;
 window.closeConfirmModal = closeConfirmModal;
 
-// Initialize components on document readiness
+// Initialize component execution on DOM load
 document.addEventListener("DOMContentLoaded", () => {
     fetchIncomingRequests();
 });
 
 // ==========================================
-// 2. FETCH INCOMING BOOKINGS FOR THIS HOST
+// 2. FETCH INCOMING BOOKINGS (WITH ATLAS LINKING)
 // ==========================================
 async function fetchIncomingRequests() {
     const container = document.getElementById("bookings-container");
     if (!container) return;
     
-    // Injecting temporary loading indicator into your .listings-grid-v2 wrapper
+    // Injecting dynamic loading message into grid container
     container.innerHTML = `<p class="empty-msg" style="grid-column: 1/-1; text-align: center; color: #666;">Fetching pending guest reservations from database network...</p>`;
 
     try {
@@ -43,6 +43,8 @@ async function fetchIncomingRequests() {
         if (!response.ok) throw new Error("Failed to pull from structural booking routes.");
 
         const bookings = await response.json();
+        console.log("INCOMING BOOKING DATA IN BROWSER:", bookings);
+        
         container.innerHTML = ""; // Wipe container clean for dataset paint loop
 
         if (bookings.length === 0) {
@@ -52,24 +54,41 @@ async function fetchIncomingRequests() {
 
         bookings.forEach(booking => {
             const card = document.createElement("div");
-            // Adheres perfectly to your template styling configuration rules
-            card.className = "listing-card"; 
+            card.className = "listing-card"; // Adheres perfectly to your template styling configuration rules
             
             // UI Status Flag colors matching your style specifications
             const isApproved = booking.status === 'approved';
             const isRejected = booking.status === 'rejected';
             const statusColor = isApproved ? '#008486' : isRejected ? '#ff5a5f' : '#d48d3b';
 
-            // Clean data fallback handlers
-            const listingName = booking.listing ? booking.listing.name : 'Unknown Accommodation Title';
-            const listingImg = (booking.listing && booking.listing.image) ? booking.listing.image : 'https://placehold.co/600x400?text=Listing+Preview';
-            const guestIdentifier = booking.guestName || (booking.guest ? `Guest ID: ${booking.guest.substring(0, 8)}...` : 'Anonymous Guest');
+            // 1. Read the separate listingDetails sent from our fixed backend
+            const details = booking.listingDetails;
+            
+            // 2. Set variable extraction with absolute fallbacks
+            let listingName = "Unknown Accommodation Title";
+            let displayPrice = "0";
+            let listingImg = 'https://placehold.co/600x400?text=Listing+Preview';
+
+            if (details) {
+                listingName = details.name || listingName;
+                displayPrice = details.price ? Number(details.price).toLocaleString() : "0";
+                if (details.image) listingImg = details.image;
+            } else if (booking.rawListingId) {
+                listingName = `Listing ID Ref: ${booking.rawListingId}`;
+            }
+
+            const guestIdentifier = booking.guestId || 'Anonymous Guest';
 
             card.innerHTML = `
                 <img src="${listingImg}" alt="${listingName}" style="width: 100%; height: 200px; object-fit: cover;">
                 <div class="card-info" style="padding: 20px; display: flex; flex-direction: column; gap: 8px;">
                     <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #222;">${listingName}</h3>
                     
+                    <p style="margin: 0; font-size: 0.9rem; color: #555;">
+                        <i class="fa-solid fa-money-bill" style="color: #666; margin-right: 5px;"></i> 
+                        <strong>Price Rate:</strong> ₱${displayPrice} / night
+                    </p>
+
                     <p style="margin: 0; font-size: 0.9rem; color: #555;">
                         <i class="fa-solid fa-user-circle" style="color: #666; margin-right: 5px;"></i> 
                         <strong>Guest:</strong> ${guestIdentifier}
@@ -110,7 +129,7 @@ async function fetchIncomingRequests() {
 async function updateBookingStatus(bookingId, decision) {
     const messagePrompt = `Are you absolutely certain you want to flag this active guest transaction request as ${decision.toUpperCase()}?`;
     
-    // Call our non-blocking structural prompt layer
+    // Call our non-blocking structural confirm popup layer
     const decisionConfirmed = await showConfirmModal(messagePrompt);
     if (!decisionConfirmed) return;
 
@@ -127,7 +146,7 @@ async function updateBookingStatus(bookingId, decision) {
         }
 
         showStatusModal("Update Completed", `The property accommodation booking request has been systematically marked as ${decision.toUpperCase()}!`);
-        fetchIncomingRequests(); // Triggers continuous live pipeline structural refetch
+        fetchIncomingRequests(); // Reload cards dynamically
     } catch (err) {
         console.error("Booking transactional update failed:", err);
         showStatusModal("Update Error", err.message);
@@ -135,11 +154,14 @@ async function updateBookingStatus(bookingId, decision) {
 }
 
 // ==========================================
-// 4. FLOATING SYSTEM POPUP MODAL CONTROL APIS
+// 4. SYSTEM POPUP MODAL CONTROL LOGIC
 // ==========================================
 function showStatusModal(title, message) {
     const modal = document.getElementById("status-modal");
-    if (!modal) return;
+    if (!modal) {
+        alert(`${title}: ${message}`);
+        return;
+    }
     document.getElementById("status-modal-title").innerText = title;
     document.getElementById("status-modal-message").innerText = message;
     modal.classList.add("modal-active");
@@ -154,7 +176,10 @@ function showConfirmModal(message) {
     return new Promise((resolve) => {
         const confirmModal = document.getElementById("confirm-modal");
         const yesBtn = document.getElementById("confirm-modal-yes");
-        if (!confirmModal || !yesBtn) return resolve(false);
+        
+        if (!confirmModal || !yesBtn) {
+            return resolve(confirm(message));
+        }
 
         document.getElementById("confirm-modal-message").innerText = message;
         confirmModal.classList.add("modal-active");
