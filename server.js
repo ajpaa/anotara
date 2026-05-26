@@ -176,7 +176,7 @@ app.get(adminPages, isAuthenticated, hasRole('admin'), (req, res) => {
     }
     
     // Serves the files directly out of your public/admin/ folder structure
-    res.sendFile(path.join(__dirname, 'public', 'admin'));
+    res.sendFile(path.join(__dirname, 'public', 'admin', targetFile));
 });
 // ==========================================
 // 7. PUBLIC STATIC FILE HIGHWAY (MUST BE AFTER PROTECTED ROUTES)
